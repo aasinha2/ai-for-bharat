@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SHRAM-AI — Employer Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  /* Warm slate-teal palette for employer */
+  --teal:#0E7F8C;
+  --teal2:#12A3B3;
+  --tealLight:#E8F7F9;
+  --tealGlow:rgba(14,127,140,.15);
+
+  /* Warm backgrounds */
+  --bg:#F5F7F8;
+  --surface:#FFFFFF;
+  --surface2:#F8FAFB;
+  --surface3:#EEF2F4;
+  --surface4:#E4EBEe;
+  --border:#DDE4E7;
+  --borderStrong:#BCC8CE;
+
+  /* Text */
+  --text:#0D1F26;
+  --textSub:#2E5261;
+  --muted:#6B8794;
+  --mutedLight:#9BB5BF;
+
+  /* Semantic */
+  --green:#147A3F;
+  --greenBg:#EDFAF3;
+  --greenBorder:#A3E6BF;
+  --red:#C0392B;
+  --redBg:#FEF2F2;
+  --gold:#8B5E00;
+  --goldBg:#FFFAEB;
+  --goldBorder:#FDE68A;
+  --orange:#C85308;
+  --orangeBg:#FFF4ED;
+  --orangeBorder:#FED7AA;
+  --purple:#5B21B6;
+
+  --font:'Plus Jakarta Sans',sans-serif;
+  --r:13px;
+  --tr:0.2s ease;
+  --shadow-sm:0 1px 3px rgba(13,31,38,.07),0 1px 2px rgba(13,31,38,.05);
+  --shadow:0 4px 12px rgba(13,31,38,.09),0 2px 6px rgba(13,31,38,.05);
+  --shadow-lg:0 10px 30px rgba(13,31,38,.12),0 4px 12px rgba(13,31,38,.07);
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+
+/* Header */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 28px;background:rgba(245,247,248,.92);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  box-shadow:var(--shadow-sm);
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),#0A5F6A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:800;color:#fff;
+  box-shadow:0 3px 10px rgba(14,127,140,.35);
+}
+.logo-name{font-size:18px;font-weight:800;color:var(--text);}
+.logo-name span{color:var(--teal2);}
+.logo-tag{font-size:9.5px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
+.employer-badge{
+  padding:4px 12px;border-radius:16px;
+  background:var(--tealLight);border:1px solid rgba(14,127,140,.25);
+  font-size:11.5px;color:var(--teal);font-weight:700;
+}
+.header-btns{display:flex;gap:9px;align-items:center;}
+.btn-worker{
+  padding:7px 13px;border-radius:9px;
+  background:var(--orangeBg);border:1px solid var(--orangeBorder);
+  color:var(--orange);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);
+  transition:var(--tr);
+}
+.btn-worker:hover{background:var(--orange);color:#fff;}
+
+/* Main */
+.main{max-width:1120px;margin:0 auto;padding:24px 20px;}
+
+/* Search Hero */
+.search-hero{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:28px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.search-hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,var(--tealGlow),transparent 70%);
+}
+.search-hero h1{font-size:26px;font-weight:800;margin-bottom:5px;color:var(--text);}
+.search-hero p{font-size:13.5px;color:var(--muted);margin-bottom:20px;}
+.search-row{display:flex;gap:9px;flex-wrap:wrap;}
+.search-select,.search-input{
+  padding:10px 15px;border-radius:10px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-size:13.5px;font-family:var(--font);
+  outline:none;transition:var(--tr);
+}
+.search-select:focus,.search-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,127,140,.1);}
+.search-input{flex:1;min-width:160px;}
+.btn-search{
+  padding:10px 22px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),#0A5F6A);
+  color:#fff;font-weight:700;font-size:13.5px;border:none;cursor:pointer;
+  font-family:var(--font);transition:var(--tr);
+  box-shadow:0 2px 8px rgba(14,127,140,.3);
+}
+.btn-search:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(14,127,140,.4);}
+
+/* NLP Row */
+.nlp-row{
+  display:flex;gap:9px;margin-top:13px;padding-top:13px;
+  border-top:1px solid var(--border);
+}
+.nlp-input{
+  flex:1;padding:10px 15px;border-radius:10px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-size:13px;font-family:var(--font);outline:none;
+  transition:var(--tr);
+}
+.nlp-input:focus{border-color:var(--teal);}
+.nlp-input::placeholder{color:var(--mutedLight);}
+.btn-nlp{
+  padding:10px 16px;border-radius:10px;
+  background:var(--tealLight);border:1px solid rgba(14,127,140,.25);
+  color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;
+  font-family:var(--font);transition:var(--tr);white-space:nowrap;
+}
+.btn-nlp:hover{background:var(--teal);color:#fff;}
+
+/* Stats */
+.stats-row{display:flex;gap:13px;margin-bottom:20px;flex-wrap:wrap;}
+.stat-card{
+  flex:1;min-width:130px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 17px;
+  box-shadow:var(--shadow-sm);
+}
+.stat-val{font-size:26px;font-weight:800;line-height:1;}
+.stat-lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:4px;font-weight:600;}
+.stat-val.teal{color:var(--teal2);}
+.stat-val.green{color:var(--green);}
+.stat-val.orange{color:var(--orange);}
+
+/* Controls row */
+.controls-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;}
+.filter-btn{
+  padding:5px 13px;border-radius:16px;font-size:12px;font-weight:600;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;font-family:var(--font);transition:var(--tr);
+}
+.filter-btn.active,.filter-btn:hover{background:var(--tealLight);border-color:rgba(14,127,140,.3);color:var(--teal);}
+
+.sort-row{display:flex;gap:7px;}
+.sort-btn{
+  padding:5px 13px;border-radius:16px;font-size:12px;font-weight:600;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;font-family:var(--font);transition:var(--tr);
+}
+.sort-btn.active{background:var(--surface3);color:var(--textSub);}
+
+/* Worker Cards */
+.results-label{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:12px;}
+.workers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.worker-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;transition:var(--tr);
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.worker-card:hover{border-color:rgba(14,127,140,.35);transform:translateY(-2px);box-shadow:var(--shadow);}
+.worker-card.verified{border-color:rgba(20,122,63,.2);}
+.verified-ribbon{
+  position:absolute;top:0;right:0;
+  background:linear-gradient(135deg,var(--green),#0E5C2E);
+  color:#fff;font-size:9px;font-weight:800;
+  padding:3px 10px;border-bottom-left-radius:9px;letter-spacing:.5px;
+}
+.wc-top{display:flex;align-items:center;gap:11px;margin-bottom:13px;}
+.wc-avatar{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),#0A5F6A);
+  display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;
+}
+.wc-name{font-size:14.5px;font-weight:800;color:var(--text);}
+.wc-role{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.wc-verified{
+  margin-left:auto;padding:3px 8px;border-radius:7px;
+  font-size:10px;font-weight:700;white-space:nowrap;
+}
+.wc-verified.yes{background:var(--greenBg);color:var(--green);border:1px solid var(--greenBorder);}
+.wc-verified.no{background:var(--goldBg);color:var(--gold);border:1px solid var(--goldBorder);}
+.wc-details{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+.wc-detail{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
+.wc-d-val{font-size:13.5px;font-weight:700;}
+.wc-d-lab{font-size:10px;color:var(--muted);font-weight:600;}
+.wc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.wc-tag{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;}
+.wc-tag.skill{background:var(--tealLight);color:var(--teal);}
+.wc-tag.exp{background:rgba(91,33,182,.08);color:var(--purple);}
+.wc-tag.loc{background:var(--greenBg);color:var(--green);}
+.wc-actions{display:flex;gap:7px;}
+.btn-contact{
+  flex:1;padding:8px;border-radius:9px;
+  background:linear-gradient(135deg,var(--teal),#0A5F6A);
+  color:#fff;font-weight:700;font-size:12px;
+  border:none;cursor:pointer;font-family:var(--font);transition:var(--tr);
+}
+.btn-contact:hover{box-shadow:0 3px 12px rgba(14,127,140,.35);}
+.btn-view{
+  padding:8px 13px;border-radius:9px;
+  background:var(--surface2);color:var(--muted);
+  font-weight:600;font-size:12px;
+  border:1px solid var(--border);cursor:pointer;
+  font-family:var(--font);transition:var(--tr);
+}
+.btn-view:hover{border-color:var(--teal);color:var(--teal);}
+
+/* Post Job Section */
+.post-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.post-section h2{font-size:17px;font-weight:800;margin-bottom:4px;color:var(--text);}
+.post-section p{font-size:13px;color:var(--muted);margin-bottom:18px;}
+.post-form{display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:16px;}
+.post-form.open{display:block;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.form-field input,.form-field select,.form-field textarea{
+  padding:9px 12px;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-size:13px;font-family:var(--font);outline:none;
+  transition:var(--tr);
+}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,127,140,.1);}
+.form-field textarea{resize:vertical;min-height:80px;}
+.form-field.full{grid-column:1/-1;}
+.btn-post{
+  padding:11px 28px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),#0A5F6A);
+  color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;
+  font-family:var(--font);transition:var(--tr);
+  box-shadow:0 2px 8px rgba(14,127,140,.3);
+}
+.btn-post:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(14,127,140,.4);}
+.btn-toggle{
+  padding:9px 18px;border-radius:10px;
+  background:var(--tealLight);border:1px solid rgba(14,127,140,.25);
+  color:var(--teal);font-weight:700;font-size:13px;
+  cursor:pointer;font-family:var(--font);transition:var(--tr);
+}
+.btn-toggle:hover{background:var(--teal);color:#fff;}
+
+/* Profile Modal */
+.profile-modal{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(13,31,38,.5);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;
+}
+.profile-modal.open{display:flex;}
+.pm-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:28px;width:500px;max-width:95vw;
+  animation:up .3s ease;box-shadow:var(--shadow-lg);
+}
+.pm-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.pm-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0A5F6A);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 3px 12px rgba(14,127,140,.3);}
+.pm-name{font-size:20px;font-weight:800;color:var(--text);}
+.pm-role{font-size:13px;color:var(--muted);}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.pm-item{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;}
+.pm-val{font-size:15px;font-weight:700;color:var(--text);}
+.pm-lab{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:1px;}
+.pm-close{margin-top:14px;width:100%;padding:10px;border-radius:9px;background:var(--surface2);color:var(--muted);font-weight:600;font-size:13px;border:1px solid var(--border);cursor:pointer;font-family:var(--font);}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--text);color:#F5F7F8;
+  padding:11px 22px;border-radius:11px;font-size:13px;font-weight:600;
+  box-shadow:var(--shadow-lg);z-index:999;
+  transition:transform .3s ease,opacity .3s ease;opacity:0;
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface2);}
+::-webkit-scrollbar-thumb{background:var(--borderStrong);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- PROFILE MODAL -->
+<div class="profile-modal" id="profileModal">
+  <div class="pm-card">
+    <div class="pm-header">
+      <div class="pm-avatar" id="pmAvatar">🧑‍🔧</div>
+      <div>
+        <div class="pm-name" id="pmName">—</div>
+        <div class="pm-role" id="pmRole">—</div>
+      </div>
+    </div>
+    <div class="pm-grid" id="pmGrid"></div>
+    <button class="pm-close" onclick="document.getElementById('profileModal').classList.remove('open')">Close ✕</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">श</div>
+    <div>
+      <div class="logo-name">SHRAM<span>AI</span></div>
+      <div class="logo-tag">Employer Portal</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="employer-badge">🏢 Employer Dashboard</div>
+    <div class="header-btns">
+      <button class="btn-worker" onclick="window.open('index.html','_blank')">👷 Worker App</button>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- POST JOB -->
+  <div class="post-section">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <h2>📋 Post a New Job</h2>
+        <p>Workers ko directly hire karo — live postings database mein save hoti hain.</p>
+      </div>
+      <button class="btn-toggle" onclick="togglePostForm()">+ Post Job</button>
+    </div>
+    <div class="post-form" id="postForm">
+      <div class="form-grid">
+        <div class="form-field"><label>Job Title*</label><input type="text" id="jTitle" placeholder="Senior Carpenter for Site Work"/></div>
+        <div class="form-field"><label>Trade*</label>
+          <select id="jTrade">
+            <option value="">Select Trade</option>
+            <option value="carpenter">Carpenter</option>
+            <option value="mason">Mason</option>
+            <option value="electrician">Electrician</option>
+            <option value="plumber">Plumber</option>
+            <option value="welder">Welder</option>
+            <option value="painter">Painter</option>
+            <option value="tailor">Tailor</option>
+            <option value="blacksmith">Blacksmith</option>
+            <option value="cook">Cook</option>
+            <option value="domestic work">Domestic Work</option>
+            <option value="brick layer">Brick Layer</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Daily Wage (₹)*</label><input type="number" id="jWage" placeholder="650"/></div>
+        <div class="form-field"><label>Duration</label><input type="text" id="jDuration" placeholder="3 months"/></div>
+        <div class="form-field"><label>District</label><input type="text" id="jDistrict" placeholder="Patna"/></div>
+        <div class="form-field"><label>Min. Experience (years)</label><input type="number" id="jExp" placeholder="3"/></div>
+        <div class="form-field"><label>Landmark / Site</label><input type="text" id="jLandmark" placeholder="Near Gandhi Maidan, East Block"/></div>
+        <div class="form-field"><label>Contact Phone</label><input type="tel" id="jPhone" placeholder="91-98XXXXXXXX"/></div>
+        <div class="form-field full"><label>Job Description</label><textarea id="jDesc" placeholder="Describe the work, requirements, site conditions..."></textarea></div>
+      </div>
+      <button class="btn-post" onclick="postJob()">🚀 Post Job Live</button>
+    </div>
+  </div>
+
+  <!-- SEARCH HERO -->
+  <div class="search-hero">
+    <h1>Find Skilled Workers</h1>
+    <p>Search across verified informal workers in India. Filter by trade, district, experience, and more.</p>
+    <div class="search-row">
+      <select class="search-select" id="tradeFilter" onchange="searchWorkers()">
+        <option value="">All Trades</option>
+        <option value="carpenter">Carpenter</option>
+        <option value="mason">Mason</option>
+        <option value="electrician">Electrician</option>
+        <option value="plumber">Plumber</option>
+        <option value="welder">Welder</option>
+        <option value="painter">Painter</option>
+        <option value="tailor">Tailor</option>
+        <option value="blacksmith">Blacksmith</option>
+        <option value="weaver">Weaver</option>
+        <option value="cook">Cook</option>
+        <option value="asha worker">ASHA Worker</option>
+        <option value="anganwadi">Anganwadi</option>
+        <option value="midwife">Midwife</option>
+        <option value="nurse aide">Nurse Aide</option>
+        <option value="domestic work">Domestic Work</option>
+        <option value="brick layer">Brick Layer</option>
+      </select>
+      <select class="search-select" id="districtFilter" onchange="searchWorkers()">
+        <option value="">All Districts</option>
+        <option>Patna</option><option>Varanasi</option><option>Lucknow</option>
+        <option>Bhopal</option><option>Jaipur</option><option>Delhi</option>
+        <option>Mumbai</option><option>Pune</option><option>Bengaluru</option>
+        <option>Hyderabad</option><option>Chennai</option><option>Kolkata</option>
+        <option>Ahmedabad</option><option>Surat</option><option>Ranchi</option>
+        <option>Jamshedpur</option><option>Chandigarh</option><option>Nagpur</option>
+      </select>
+      <select class="search-select" id="expFilter" onchange="searchWorkers()">
+        <option value="0">Any Experience</option>
+        <option value="3">3+ Years</option>
+        <option value="5">5+ Years</option>
+        <option value="10">10+ Years</option>
+        <option value="15">15+ Years (Master)</option>
+      </select>
+      <input class="search-input" id="nameFilter" placeholder="Search by name..." oninput="searchWorkers()"/>
+      <button class="btn-search" onclick="searchWorkers()">🔍 Search</button>
+    </div>
+    <div class="nlp-row">
+      <span style="font-size:12px;color:var(--muted);white-space:nowrap;padding-top:11px;">🤖 AI Search:</span>
+      <input class="nlp-input" id="nlpInput" placeholder='Try: "Find 3 master carpenters near Patna with 10+ years"' onkeydown="if(event.key==='Enter')nlpSearch()"/>
+      <button class="btn-nlp" onclick="nlpSearch()">✨ AI Search</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val teal" id="statTotal">0</div>
+      <div class="stat-lab">Total Workers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val green" id="statVerified">0</div>
+      <div class="stat-lab">Verified</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val orange" id="statActive">0</div>
+      <div class="stat-lab">Available Now</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val teal" id="statResults">0</div>
+      <div class="stat-lab">Results</div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls-row">
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all',this)">All Workers</button>
+      <button class="filter-btn" onclick="setFilter('verified',this)">✓ Verified Only</button>
+      <button class="filter-btn" onclick="setFilter('available',this)">Available Now</button>
+      <button class="filter-btn" onclick="setFilter('master',this)">Master Level (15+ yrs)</button>
+    </div>
+    <div class="sort-row">
+      <button class="sort-btn active" onclick="setSort('experience',this)">↓ Experience</button>
+      <button class="sort-btn" onclick="setSort('wage',this)">↓ Fair Wage</button>
+      <button class="sort-btn" onclick="setSort('name',this)">A–Z Name</button>
+    </div>
+  </div>
+  
+  <p class="results-label" id="resultsLabel">Loading workers...</p>
+  <div class="workers-grid" id="workersGrid"></div>
+
+</div>
+
+<div id="toast"></div>
+
+<script src="dataset.js"></script>
+<script>
+// =============================================
+//  SHRAM-AI Employer Portal v2.0
+//  Warm UI + Live DynamoDB + NLP Search
+// =============================================
+
+// ✅ HARDCODED BACKEND — paste your API Gateway URL once here
+const API_BASE_URL = 'https://hufy1r2ma9.execute-api.ap-south-1.amazonaws.com/prod';
+
+let cfg = { apiUrl: API_BASE_URL };
+let allWorkers = [...workersDataset];
+let currentFilter = 'all';
+let currentSort = 'experience';
+
+function loadConfig(){ /* API hardcoded above */ }
+
+/* ---- DB CALLS ---- */
+async function dbScan(table){
+  if(!cfg.apiUrl) return null;
+  try{
+    const res = await fetch(`${cfg.apiUrl}/scan?table=${table}`);
+    return res.json();
+  }catch(e){ return null; }
+}
+async function dbPut(table, item){
+  if(!cfg.apiUrl) return { offline: true };
+  try{
+    const res = await fetch(`${cfg.apiUrl}/workers`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({table,item})
+    });
+    return res.json();
+  }catch(e){ return {error:e.message}; }
+}
+
+async function loadWorkersFromDB(){
+  showToast('⏳ Loading workers from DynamoDB...');
+  const result = await dbScan('shramai-workers');
+  if(result && result.items && result.items.length > 0){
+    const dbIds = new Set(result.items.map(w => w.workerId || w.id));
+    allWorkers = [...result.items, ...workersDataset.filter(w => !dbIds.has(w.id))];
+    showToast(`✅ ${result.items.length} live + ${allWorkers.length - result.items.length} sample workers loaded`);
+  } else {
+    allWorkers = [...workersDataset];
+  }
+  renderWorkers(allWorkers);
+  updateStats();
+}
+
+async function saveJobToDB(job){
+  const result = await dbPut('shramai-jobs', job);
+  if(result && !result.offline && !result.error) showToast('✅ Job saved to DynamoDB!');
+  else showToast('💾 Job saved locally (no AWS configured)');
+}
+
+/* ---- SEARCH ---- */
+function searchWorkers(){
+  const trade = document.getElementById('tradeFilter').value;
+  const district = document.getElementById('districtFilter').value;
+  const minExp = parseInt(document.getElementById('expFilter').value) || 0;
+  const name = document.getElementById('nameFilter').value.toLowerCase();
+  
+  let filtered = [...allWorkers];
+  if(trade) filtered = filtered.filter(w => w.trade === trade);
+  if(district) filtered = filtered.filter(w => (w.district||'').toLowerCase() === district.toLowerCase());
+  if(minExp) filtered = filtered.filter(w => (w.experience||0) >= minExp);
+  if(name) filtered = filtered.filter(w => w.name.toLowerCase().includes(name));
+  
+  // Apply current filter
+  if(currentFilter === 'verified') filtered = filtered.filter(w => w.verified);
+  if(currentFilter === 'available') filtered = filtered.filter(w => w.available !== false);
+  if(currentFilter === 'master') filtered = filtered.filter(w => (w.experience||0) >= 15);
+  
+  // Sort
+  if(currentSort === 'experience') filtered.sort((a,b) => (b.experience||0) - (a.experience||0));
+  if(currentSort === 'wage') filtered.sort((a,b) => (b.fairWage||b.currentWage||0) - (a.fairWage||a.currentWage||0));
+  if(currentSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+  
+  renderWorkers(filtered);
+}
+
+function setFilter(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  searchWorkers();
+}
+function setSort(s, btn){
+  currentSort = s;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  searchWorkers();
+}
+
+/* ---- NLP SEARCH ---- */
+async function nlpSearch(){
+  const query = document.getElementById('nlpInput').value.trim();
+  if(!query) return;
+  
+  if(!cfg.apiUrl || cfg.apiUrl.includes('PASTE_YOUR')){
+    showToast('💡 Add Claude API key in Config for AI search.');
+    // Fallback keyword match
+    const lower = query.toLowerCase();
+    const trades = ['carpenter','mason','electrician','plumber','welder','painter','tailor','blacksmith','cook'];
+    for(const t of trades){ if(lower.includes(t)){ document.getElementById('tradeFilter').value=t; break; } }
+    const districts = ['patna','varanasi','bhopal','lucknow','jaipur','delhi','mumbai','pune'];
+    for(const d of districts){ if(lower.includes(d)){ document.getElementById('districtFilter').value=d.charAt(0).toUpperCase()+d.slice(1); break; } }
+    searchWorkers();
+    return;
+  }
+  
+  showToast('🤖 AI analyzing query...');
+  
+  try{
+    const res = await fetch(`${cfg.apiUrl}/chat`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        max_tokens:300,
+        messages:[{role:'user',content:`You are a hiring assistant for SHRAM-AI India informal workforce platform.
+
+Employer query: "${query}"
+
+Extract criteria. Return ONLY valid JSON (no markdown):
+{"trade":"trade_name_or_null","district":"district_or_null","minExperience":0,"minWage":0,"verified":false,"count":0,"summary":"brief description"}
+
+Valid trades: carpenter, mason, electrician, plumber, welder, painter, tailor, blacksmith, weaver, cook, asha worker, midwife, nurse aide, domestic work, brick layer`}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content[0].text.replace(/```json|```/g,'').trim();
+    const criteria = JSON.parse(text);
+    
+    if(criteria.trade) document.getElementById('tradeFilter').value = criteria.trade;
+    if(criteria.district){ 
+      const sel = document.getElementById('districtFilter');
+      [...sel.options].forEach(o=>{ if(o.text.toLowerCase()===criteria.district.toLowerCase()) sel.value=o.text; });
+    }
+    if(criteria.minExperience > 0){
+      const exp = criteria.minExperience >= 15 ? 15 : criteria.minExperience >= 10 ? 10 : criteria.minExperience >= 5 ? 5 : criteria.minExperience >= 3 ? 3 : 0;
+      document.getElementById('expFilter').value = exp;
+    }
+    if(criteria.verified) setFilter('verified', document.querySelector('.filter-btn'));
+    
+    searchWorkers();
+    showToast(`🤖 "${criteria.summary}"`);
+    
+  }catch(e){
+    console.error(e);
+    showToast('AI search failed — using keyword match');
+    const lower = query.toLowerCase();
+    ['carpenter','mason','electrician','plumber','welder','painter','tailor'].forEach(t=>{
+      if(lower.includes(t)) document.getElementById('tradeFilter').value=t;
+    });
+    searchWorkers();
+  }
+}
+
+/* ---- RENDER WORKERS ---- */
+const tradeEmoji = {
+  carpenter:'🪚',mason:'🏗️',electrician:'⚡',plumber:'🔧',welder:'🔥',
+  painter:'🖌️',tailor:'🧵',blacksmith:'⚒️',weaver:'🧶',cook:'👨‍🍳',
+  'asha worker':'💊','anganwadi':'👶',midwife:'🤱','nurse aide':'🩺',
+  'domestic work':'🏠','brick layer':'🧱',
+};
+
+function renderWorkers(workers){
+  const grid = document.getElementById('workersGrid');
+  document.getElementById('resultsLabel').textContent = `Showing ${workers.length} workers`;
+  document.getElementById('statResults').textContent = workers.length;
+  
+  if(!workers.length){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:56px;color:var(--muted);background:var(--surface);border:1px dashed var(--border);border-radius:14px;">No workers found matching your filters. Try broadening your search.</div>';
+    return;
+  }
+  
+  grid.innerHTML = workers.map(w => {
+    const fw = w.fairWage || wageIntelligence[w.trade]?.avg || 500;
+    const exp = w.experience || 0;
+    const level = exp>=15?'Master':exp>=7?'Senior':exp>=3?'Intermediate':'Beginner';
+    const emoji = tradeEmoji[w.trade] || '🧑‍🔧';
+    const wid = w.workerId || w.id;
+    
+    return `
+    <div class="worker-card${w.verified?' verified':''}" id="wc_${wid}">
+      ${w.verified?'<div class="verified-ribbon">✓ VERIFIED</div>':''}
+      <div class="wc-top">
+        <div class="wc-avatar">${emoji}</div>
+        <div>
+          <div class="wc-name">${w.name}</div>
+          <div class="wc-role">${(w.trade||'').charAt(0).toUpperCase()+(w.trade||'').slice(1)} · ${w.district||'—'}</div>
+        </div>
+        <div class="wc-verified ${w.verified?'yes':'no'}">${w.verified?'✓ Verified':'Unverified'}</div>
+      </div>
+      <div class="wc-details">
+        <div class="wc-detail"><div class="wc-d-val" style="color:var(--green)">₹${fw}/day</div><div class="wc-d-lab">Fair Wage</div></div>
+        <div class="wc-detail"><div class="wc-d-val" style="color:var(--teal2)">${exp} yrs</div><div class="wc-d-lab">Experience</div></div>
+      </div>
+      <div class="wc-tags">
+        <span class="wc-tag skill">${w.trade||'—'}</span>
+        <span class="wc-tag exp">${level}</span>
+        <span class="wc-tag loc">📍 ${w.district||'India'}</span>
+      </div>
+      <div class="wc-actions">
+        <button class="btn-contact" onclick="contactWorker('${w.name}','${wid}')">📞 Contact</button>
+        <button class="btn-view" onclick="viewProfile('${wid}')">Profile →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---- POST JOB ---- */
+function togglePostForm(){
+  document.getElementById('postForm').classList.toggle('open');
+}
+
+async function postJob(){
+  const job = {
+    jobId:'j_'+Date.now(),
+    title:document.getElementById('jTitle').value.trim(),
+    trade:document.getElementById('jTrade').value,
+    wage:parseInt(document.getElementById('jWage').value)||0,
+    duration:document.getElementById('jDuration').value,
+    district:document.getElementById('jDistrict').value,
+    minExperience:parseInt(document.getElementById('jExp').value)||0,
+    landmark:document.getElementById('jLandmark').value,
+    phone:document.getElementById('jPhone').value,
+    description:document.getElementById('jDesc').value,
+    postedAt:new Date().toISOString(),
+    status:'active',
+    employer:'Employer via Portal'
+  };
+  
+  if(!job.title || !job.wage){ showToast('❌ Title and wage are required'); return; }
+  if(!job.trade){ showToast('❌ Please select a trade'); return; }
+  
+  await saveJobToDB(job);
+  togglePostForm();
+  
+  // Clear form
+  ['jTitle','jWage','jDuration','jDistrict','jExp','jLandmark','jPhone','jDesc'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('jTrade').value='';
+}
+
+/* ---- ACTIONS ---- */
+function contactWorker(name, id){
+  const w = allWorkers.find(x=>(x.workerId||x.id)===id);
+  if(w && w.phone){
+    showToast(`📞 Calling ${name}: ${w.phone}`);
+  } else {
+    showToast(`📞 Contact request sent to ${name}!`);
+  }
+}
+
+function viewProfile(id){
+  const w = allWorkers.find(x=>(x.workerId||x.id)===id);
+  if(!w) return;
+  const fw = w.fairWage || wageIntelligence[w.trade]?.avg || 500;
+  const emoji = tradeEmoji[w.trade] || '🧑‍🔧';
+  
+  document.getElementById('pmAvatar').textContent = emoji;
+  document.getElementById('pmName').textContent = w.name;
+  document.getElementById('pmRole').textContent = `${(w.trade||'').charAt(0).toUpperCase()+(w.trade||'').slice(1)} · ${w.district||'India'}`;
+  
+  document.getElementById('pmGrid').innerHTML = `
+    <div class="pm-item"><div class="pm-val" style="color:var(--green)">₹${fw}/day</div><div class="pm-lab">Fair Wage</div></div>
+    <div class="pm-item"><div class="pm-val">${w.experience||0} years</div><div class="pm-lab">Experience</div></div>
+    <div class="pm-item"><div class="pm-val">${w.state||'—'}</div><div class="pm-lab">State</div></div>
+    <div class="pm-item"><div class="pm-val" style="color:${w.verified?'var(--green)':'var(--gold)'}">${w.verified?'✓ Verified':'Pending'}</div><div class="pm-lab">Status</div></div>
+    <div class="pm-item"><div class="pm-val">${w.phone||'—'}</div><div class="pm-lab">Phone</div></div>
+    <div class="pm-item"><div class="pm-val">${w.verified?'⛓️ Minted':'Pending'}</div><div class="pm-lab">Blockchain Credential</div></div>
+  `;
+  document.getElementById('profileModal').classList.add('open');
+}
+
+/* ---- STATS ---- */
+function updateStats(){
+  const verified = allWorkers.filter(w=>w.verified).length;
+  document.getElementById('statTotal').textContent = allWorkers.length;
+  document.getElementById('statVerified').textContent = verified;
+  document.getElementById('statActive').textContent = Math.floor(allWorkers.length * 0.64);
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// INIT
+loadConfig();
+renderWorkers(allWorkers);
+updateStats();
+if(cfg.apiUrl && !cfg.apiUrl.includes('PASTE_YOUR')) loadWorkersFromDB();
+</script>
+</body>
+</html>

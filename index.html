@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SHRAM-AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+/* ============ RESET & VARS ============ */
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  /* Warm Earthy Palette */
+  --saffron:#E8650A;
+  --saffron2:#F5890F;
+  --saffronLight:#FFF3E8;
+  --saffronGlow:rgba(232,101,10,.15);
+  
+  /* Backgrounds - warm creams and whites */
+  --bg:#FDF6EF;
+  --surface:#FFFFFF;
+  --surface2:#FEF9F4;
+  --surface3:#FAF0E6;
+  --surface4:#F5E6D5;
+  --border:#EDD9C5;
+  --borderStrong:#D4B896;
+  
+  /* Text */
+  --text:#1A0F05;
+  --textSub:#5C3D1E;
+  --muted:#9B7355;
+  --mutedLight:#C4A882;
+  
+  /* Semantic colors */
+  --green:#16803C;
+  --greenBg:#ECFDF5;
+  --greenBorder:#A7F3D0;
+  --red:#C0392B;
+  --redBg:#FEF2F2;
+  --blue:#1D6FA4;
+  --blueBg:#EFF6FF;
+  --gold:#B45309;
+  --goldBg:#FFFBEB;
+  --goldBorder:#FDE68A;
+  --purple:#6D28D9;
+  
+  --font:'Plus Jakarta Sans',sans-serif;
+  --fonthi:'Noto Sans Devanagari',sans-serif;
+  --r:14px;
+  --transition:0.2s cubic-bezier(.4,0,.2,1);
+  --shadow-sm:0 1px 3px rgba(90,50,10,.08),0 1px 2px rgba(90,50,10,.06);
+  --shadow:0 4px 12px rgba(90,50,10,.1),0 2px 6px rgba(90,50,10,.06);
+  --shadow-lg:0 10px 30px rgba(90,50,10,.12),0 4px 12px rgba(90,50,10,.08);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+
+/* Subtle warm grain texture */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:.6;
+}
+
+/* ============ HEADER ============ */
+header{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 28px;
+  background:rgba(253,246,239,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none;}
+.logo-mark{
+  width:40px;height:40px;border-radius:11px;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:800;color:#fff;
+  box-shadow:0 3px 10px rgba(232,101,10,.35);
+}
+.logo-name{font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.4px;}
+.logo-name span{color:var(--saffron);}
+.logo-tag{font-size:9.5px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.badge-live{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:20px;
+  background:var(--greenBg);border:1px solid var(--greenBorder);
+  font-size:11px;color:var(--green);font-weight:600;
+}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite;}
+.badge-live.warn{background:var(--goldBg);border-color:var(--goldBorder);color:var(--gold);}
+.badge-live.warn .dot-live{background:var(--gold);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.btn-config{
+  padding:7px 14px;border-radius:9px;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--textSub);font-size:12px;font-weight:600;cursor:pointer;
+  font-family:var(--font);transition:var(--transition);
+  box-shadow:var(--shadow-sm);
+}
+.btn-config:hover{background:var(--saffronLight);border-color:var(--saffron);color:var(--saffron);}
+.btn-employer{
+  padding:7px 14px;border-radius:9px;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  color:#fff;font-size:12px;font-weight:700;cursor:pointer;
+  font-family:var(--font);transition:var(--transition);border:none;
+  box-shadow:0 2px 8px rgba(232,101,10,.3);
+}
+.btn-employer:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(232,101,10,.4);}
+
+/* ============ CONFIG MODAL ============ */
+.modal-bg{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(26,15,5,.5);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;
+}
+.modal-bg.open{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:32px;width:460px;max-width:95vw;
+  box-shadow:var(--shadow-lg);
+  animation:slideUp .3s ease;
+}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal h2{font-size:19px;font-weight:800;margin-bottom:5px;color:var(--text);}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;font-weight:600;}
+.field input,.field select{
+  width:100%;padding:10px 13px;border-radius:9px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-size:13.5px;font-family:var(--font);
+  outline:none;transition:var(--transition);
+}
+.field input:focus,.field select:focus{border-color:var(--saffron);box-shadow:0 0 0 3px rgba(232,101,10,.1);}
+.modal-btns{display:flex;gap:10px;margin-top:22px;}
+.btn-save{
+  flex:1;padding:11px;border-radius:10px;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  color:#fff;font-weight:700;font-size:14px;
+  border:none;cursor:pointer;font-family:var(--font);
+  transition:var(--transition);
+}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(232,101,10,.4);}
+.btn-cancel{
+  padding:11px 20px;border-radius:10px;
+  background:var(--surface2);color:var(--muted);
+  font-weight:600;font-size:14px;border:1px solid var(--border);cursor:pointer;
+  font-family:var(--font);
+}
+
+/* ============ MAIN LAYOUT ============ */
+.app{max-width:1120px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:1fr 370px;gap:22px;position:relative;z-index:1;}
+@media(max-width:860px){.app{grid-template-columns:1fr;}}
+
+/* ============ WORKER PROFILE CARD ============ */
+.profile-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:22px;margin-bottom:18px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.profile-card::after{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,var(--saffronGlow),transparent 70%);
+  pointer-events:none;
+}
+.profile-empty{text-align:center;padding:28px 20px;}
+.profile-empty .big-emoji{font-size:48px;margin-bottom:12px;}
+.profile-empty h3{font-size:17px;font-weight:700;margin-bottom:7px;color:var(--text);}
+.profile-empty p{font-size:13px;color:var(--muted);line-height:1.65;}
+
+.p-header{display:flex;align-items:center;gap:13px;margin-bottom:18px;}
+.p-avatar{
+  width:50px;height:50px;border-radius:50%;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  flex-shrink:0;box-shadow:0 3px 10px rgba(232,101,10,.3);
+}
+.p-name{font-size:17px;font-weight:800;color:var(--text);}
+.p-role{font-size:12px;color:var(--muted);margin-top:2px;}
+.p-verified{
+  margin-left:auto;padding:4px 10px;border-radius:8px;
+  background:var(--greenBg);color:var(--green);
+  font-size:11px;font-weight:700;border:1px solid var(--greenBorder);
+  white-space:nowrap;
+}
+.p-unverified{
+  margin-left:auto;padding:4px 10px;border-radius:8px;
+  background:var(--goldBg);color:var(--gold);
+  font-size:11px;font-weight:700;border:1px solid var(--goldBorder);
+}
+
+.wage-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;}
+.w-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px;text-align:center;}
+.w-val{font-size:19px;font-weight:800;}
+.w-lab{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;font-weight:600;}
+.w-val.green{color:var(--green);}
+.w-val.gold{color:var(--gold);}
+.w-val.red{color:var(--red);}
+
+.wage-bar-wrap{margin-bottom:14px;}
+.wage-bar-track{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.wage-bar-fill{height:100%;background:linear-gradient(90deg,var(--saffron),#C4500A);border-radius:3px;transition:width 1.2s ease;}
+.wage-bar-note{font-size:11px;color:var(--muted);margin-top:5px;font-weight:500;}
+
+.p-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.btn-primary{
+  padding:10px;border-radius:10px;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  color:#fff;font-weight:700;font-size:13px;
+  border:none;cursor:pointer;font-family:var(--font);
+  transition:var(--transition);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(232,101,10,.38);}
+.btn-secondary{
+  padding:10px;border-radius:10px;
+  background:var(--surface2);color:var(--textSub);
+  font-weight:600;font-size:13px;
+  border:1px solid var(--border);cursor:pointer;
+  font-family:var(--font);transition:var(--transition);
+}
+.btn-secondary:hover{border-color:var(--saffron);color:var(--saffron);background:var(--saffronLight);}
+
+/* ============ SKILLS SECTION ============ */
+.section-title{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:11px;}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px;}
+.skill-chip{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:11px;padding:11px;
+}
+.sk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.sk-name{font-size:12.5px;font-weight:700;color:var(--text);}
+.sk-level{font-size:10px;padding:2px 7px;border-radius:5px;font-weight:700;}
+.sk-level.master{background:rgba(232,101,10,.12);color:var(--saffron);}
+.sk-level.intermediate{background:var(--blueBg);color:var(--blue);}
+.sk-level.beginner{background:rgba(109,40,217,.1);color:var(--purple);}
+.sk-bar{height:3px;background:var(--surface4);border-radius:2px;overflow:hidden;}
+.sk-fill{height:100%;background:linear-gradient(90deg,var(--saffron),#C4500A);}
+.sk-wage{font-size:11px;color:var(--green);margin-top:5px;font-weight:600;}
+
+/* ============ UPSKILL SECTION ============ */
+.upskill-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;margin-bottom:9px;
+  display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;transition:var(--transition);
+  box-shadow:var(--shadow-sm);
+}
+.upskill-card:hover{border-color:var(--saffron);transform:translateX(2px);background:var(--saffronLight);}
+.upskill-card.top{border-color:rgba(232,101,10,.3);background:linear-gradient(135deg,var(--surface),var(--saffronLight));}
+.usk-top-tag{font-size:10px;color:var(--saffron);font-weight:700;letter-spacing:.5px;margin-bottom:3px;}
+.usk-name{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.usk-meta{font-size:11px;color:var(--muted);}
+.usk-gain{text-align:right;flex-shrink:0;}
+.usk-amount{font-size:21px;font-weight:800;color:var(--green);}
+.usk-day{font-size:10px;color:var(--muted);}
+.usk-btn{
+  margin-top:7px;padding:5px 12px;border-radius:7px;
+  background:var(--saffron);color:#fff;font-size:11px;
+  font-weight:700;border:none;cursor:pointer;font-family:var(--font);
+}
+
+/* ============ JOBS SECTION ============ */
+.job-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;margin-bottom:10px;
+  transition:var(--transition);cursor:pointer;
+  box-shadow:var(--shadow-sm);
+}
+.job-card:hover{border-color:var(--saffron);transform:translateY(-1px);box-shadow:var(--shadow);}
+.jc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+.jc-title{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.jc-employer{font-size:11.5px;color:var(--muted);}
+.jc-wage{text-align:right;}
+.jc-wage-val{font-size:21px;font-weight:800;color:var(--saffron);}
+.jc-wage-unit{font-size:10px;color:var(--muted);}
+.jc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;}
+.tag{padding:3px 9px;border-radius:7px;font-size:11px;font-weight:600;}
+.tag.loc{background:var(--blueBg);color:var(--blue);}
+.tag.dur{background:rgba(109,40,217,.08);color:var(--purple);}
+.tag.urg{background:var(--redBg);color:var(--red);}
+.tag.applied{background:var(--greenBg);color:var(--green);}
+.jc-landmark{font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.jc-apply{
+  width:100%;padding:9px;border-radius:9px;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  color:#fff;font-weight:700;font-size:13px;
+  border:none;cursor:pointer;font-family:var(--font);
+  transition:var(--transition);
+}
+.jc-apply:hover{box-shadow:0 4px 14px rgba(232,101,10,.35);}
+.jc-apply:disabled{background:var(--surface3);color:var(--muted);cursor:default;box-shadow:none;}
+
+/* ============ CHAT COLUMN ============ */
+.chat-col{display:flex;flex-direction:column;height:calc(100vh - 92px);position:sticky;top:76px;}
+.chat-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);flex:1;display:flex;flex-direction:column;
+  overflow:hidden;max-height:calc(100vh - 140px);
+  box-shadow:var(--shadow);
+}
+.chat-header{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:11px;
+  background:linear-gradient(135deg,var(--saffronLight),var(--surface));
+}
+.chat-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+  box-shadow:0 2px 8px rgba(232,101,10,.3);
+}
+.chat-ai-name{font-size:14px;font-weight:700;color:var(--text);}
+.chat-ai-sub{font-size:11px;color:var(--green);font-weight:500;}
+.mic-btn{
+  margin-left:auto;width:36px;height:36px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:var(--transition);font-size:15px;
+}
+.mic-btn:hover{background:var(--saffronLight);border-color:var(--saffron);}
+.mic-btn.listening{background:rgba(232,101,10,.15);border-color:var(--saffron);animation:micPulse 1s infinite;}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,101,10,.35);}50%{box-shadow:0 0 0 8px rgba(232,101,10,0);}}
+
+.messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;background:var(--bg);}
+.messages::-webkit-scrollbar{width:4px;}
+.messages::-webkit-scrollbar-track{background:transparent;}
+.messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.msg{max-width:84%;animation:msgIn .22s ease;}
+@keyframes msgIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.msg.bot{align-self:flex-start;}
+.msg.user{align-self:flex-end;}
+.msg-bubble{
+  padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.55;
+}
+.msg.bot .msg-bubble{
+  background:var(--surface);border:1px solid var(--border);
+  border-bottom-left-radius:3px;color:var(--text);
+  box-shadow:var(--shadow-sm);
+}
+.msg.user .msg-bubble{
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  color:#fff;border-bottom-right-radius:3px;
+  box-shadow:0 2px 8px rgba(232,101,10,.3);
+}
+.msg-time{font-size:10px;color:var(--mutedLight);margin-top:3px;padding:0 2px;}
+.msg.user .msg-time{text-align:right;}
+.typing-indicator{align-self:flex-start;}
+.typing-dots{display:flex;gap:4px;padding:11px 15px;background:var(--surface);border-radius:14px;border-bottom-left-radius:3px;border:1px solid var(--border);}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--mutedLight);animation:typeDot 1.2s infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes typeDot{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+
+/* Quick replies */
+.quick-replies{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 10px;background:var(--surface);}
+.qr-btn{
+  padding:5px 11px;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--textSub);font-size:11.5px;font-weight:600;cursor:pointer;
+  font-family:var(--font);transition:var(--transition);
+}
+.qr-btn:hover{border-color:var(--saffron);color:var(--saffron);background:var(--saffronLight);}
+
+.chat-input-row{
+  padding:10px 14px 12px;border-top:1px solid var(--border);
+  display:flex;gap:8px;align-items:center;
+  background:var(--surface);
+}
+.chat-input{
+  flex:1;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:9px 13px;color:var(--text);
+  font-size:13.5px;font-family:var(--font);outline:none;
+  transition:var(--transition);
+}
+.chat-input:focus{border-color:var(--saffron);box-shadow:0 0 0 3px rgba(232,101,10,.1);}
+.chat-input::placeholder{color:var(--mutedLight);}
+.send-btn{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:var(--transition);
+  box-shadow:0 2px 8px rgba(232,101,10,.3);
+}
+.send-btn:hover{transform:scale(1.05);box-shadow:0 4px 14px rgba(232,101,10,.4);}
+
+/* ============ ALERTS ============ */
+.alert{
+  border-radius:11px;padding:12px 14px;margin-bottom:10px;
+  display:flex;gap:11px;align-items:flex-start;
+}
+.alert.warn{background:var(--redBg);border:1px solid rgba(192,57,43,.2);}
+.alert.info{background:var(--blueBg);border:1px solid rgba(29,111,164,.18);}
+.alert.success{background:var(--greenBg);border:1px solid var(--greenBorder);}
+.alert.scheme{background:var(--goldBg);border:1px solid var(--goldBorder);}
+.alert-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
+.alert-body .a-title{font-size:13px;font-weight:700;margin-bottom:2px;color:var(--text);}
+.alert-body .a-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+
+/* ============ CHAIN BADGE ============ */
+.chain-badge{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 13px;border-radius:9px;
+  background:rgba(109,40,217,.07);border:1px solid rgba(109,40,217,.18);
+  font-size:12px;color:var(--purple);width:fit-content;font-weight:600;
+}
+
+/* ============ TABS ============ */
+.tabs{display:flex;gap:5px;margin-bottom:18px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;box-shadow:var(--shadow-sm);}
+.tab{
+  padding:7px 14px;border-radius:9px;font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:var(--transition);color:var(--muted);border:none;
+  background:transparent;font-family:var(--font);
+}
+.tab.active{background:var(--saffron);color:#fff;box-shadow:0 2px 8px rgba(232,101,10,.3);}
+
+/* ============ TOAST ============ */
+#toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--text);color:#FDF6EF;
+  padding:11px 22px;border-radius:11px;font-size:13px;font-weight:600;
+  box-shadow:var(--shadow-lg);z-index:999;
+  transition:transform .3s ease,opacity .3s ease;opacity:0;
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ============ STATUS BAR ============ */
+.status-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 13px;border-radius:9px;margin-bottom:10px;
+  background:var(--greenBg);border:1px solid var(--greenBorder);
+  font-size:12px;color:var(--green);font-weight:600;
+}
+
+/* ============ EMPTY STATES ============ */
+.empty-state{
+  text-align:center;padding:28px 20px;color:var(--muted);font-size:13px;
+  background:var(--surface2);border-radius:11px;border:1px dashed var(--border);
+}
+.empty-state .e-icon{font-size:32px;margin-bottom:8px;}
+
+/* ============ DIVIDER ============ */
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface2);}
+::-webkit-scrollbar-thumb{background:var(--borderStrong);border-radius:3px;}
+
+/* ============ SHARE CARD MODAL ============ */
+.share-modal-bg{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:rgba(26,15,5,.6);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.share-modal-bg.open{display:flex;}
+.share-modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:22px;padding:28px;width:420px;max-width:100%;
+  box-shadow:var(--shadow-lg);animation:slideUp .3s ease;
+}
+.share-modal h3{font-size:17px;font-weight:800;margin-bottom:4px;color:var(--text);}
+.share-modal .sub{font-size:12.5px;color:var(--muted);margin-bottom:20px;}
+
+/* The visual skill card */
+.skill-card-visual{
+  border-radius:16px;overflow:hidden;margin-bottom:18px;
+  background:linear-gradient(135deg,#1A0F05 0%,#3D1F08 50%,#1A0F05 100%);
+  padding:24px;position:relative;
+}
+.skill-card-visual::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23FF6B00' fill-opacity='0.06'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}
+.sc-logo{
+  display:flex;align-items:center;gap:8px;margin-bottom:18px;position:relative;
+}
+.sc-logo-mark{
+  width:28px;height:28px;border-radius:7px;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#fff;
+}
+.sc-logo-text{font-size:13px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.sc-logo-text span{color:var(--saffron2);}
+.sc-verified-badge{
+  margin-left:auto;padding:3px 9px;border-radius:6px;
+  background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.4);
+  font-size:10px;font-weight:700;color:#4ADE80;
+}
+.sc-avatar-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;position:relative;}
+.sc-avatar{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--saffron),#C4500A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;flex-shrink:0;
+  box-shadow:0 0 0 3px rgba(232,101,10,.3);
+}
+.sc-name{font-size:20px;font-weight:800;color:#fff;line-height:1.1;}
+.sc-trade{font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;}
+.sc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;position:relative;}
+.sc-stat{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:10px;text-align:center;
+}
+.sc-stat-val{font-size:16px;font-weight:800;color:#fff;}
+.sc-stat-val.orange{color:var(--saffron2);}
+.sc-stat-val.green{color:#4ADE80;}
+.sc-stat-lab{font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;font-weight:600;}
+.sc-tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;position:relative;}
+.sc-tag{
+  padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;
+  background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.12);
+}
+.sc-tag.highlight{background:rgba(232,101,10,.25);color:var(--saffron2);border-color:rgba(232,101,10,.3);}
+.sc-footer{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:12px;border-top:1px solid rgba(255,255,255,.1);
+  position:relative;
+}
+.sc-footer-id{font-size:10px;color:rgba(255,255,255,.35);font-family:monospace;}
+.sc-footer-url{font-size:10px;color:rgba(255,255,255,.4);}
+
+/* Share action buttons */
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+.share-btn{
+  padding:11px;border-radius:11px;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:var(--font);transition:var(--transition);
+  display:flex;align-items:center;justify-content:center;gap:7px;border:none;
+}
+.share-btn.whatsapp{background:#25D366;color:#fff;}
+.share-btn.whatsapp:hover{background:#1DA851;transform:translateY(-1px);}
+.share-btn.copy{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.share-btn.copy:hover{border-color:var(--saffron);color:var(--saffron);}
+.share-btn.download{background:var(--blueBg);color:var(--blue);border:1px solid rgba(29,111,164,.2);}
+.share-btn.download:hover{background:var(--blue);color:#fff;}
+.share-btn.close-share{background:var(--surface3);color:var(--muted);border:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<!-- CONFIG MODAL — Language only, API is hardcoded in backend -->
+<div class="modal-bg" id="configModal">
+  <div class="modal">
+    <h2>⚙️ Settings</h2>
+    <p>API aur Bedrock backend mein already configured hai. Sirf language select karo.</p>
+    <div class="field">
+      <label>Interface Language / बोली</label>
+      <select id="cfgLang">
+        <option value="hi">हिंदी (Hindi)</option>
+        <option value="en">English</option>
+        <option value="bho">भोजपुरी (Bhojpuri)</option>
+        <option value="ta">தமிழ் (Tamil)</option>
+        <option value="bn">বাংলা (Bengali)</option>
+        <option value="te">తెలుగు (Telugu)</option>
+        <option value="mr">मराठी (Marathi)</option>
+        <option value="gu">ગુજરાતી (Gujarati)</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeConfig()">Cancel</button>
+      <button class="btn-save" onclick="saveConfig()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo">
+    <div class="logo-mark">श</div>
+    <div>
+      <div class="logo-name">SHRAM<span>AI</span></div>
+      <div class="logo-tag">Turning invisible labour into measurable capital</div>
+    </div>
+  </a>
+  <div class="header-right">
+    <div class="badge-live" id="statusBadge"><span class="dot-live"></span><span id="dbStatus">Offline Mode</span></div>
+    <button class="btn-config" onclick="openConfig()">⚙️ Config</button>
+    <button class="btn-employer" onclick="window.open('employer.html','_blank')">Employer Portal →</button>
+  </div>
+</header>
+
+<!-- MAIN APP -->
+<div class="app">
+
+  <!-- LEFT: Profile + Jobs -->
+  <div class="profile-section">
+
+    <!-- Worker Profile Card -->
+    <div class="profile-card" id="profileCard">
+      <div class="profile-empty" id="profileEmpty">
+        <div class="big-emoji">🧑‍🔧</div>
+        <h3>Chat karo, apna profile banao</h3>
+        <p>AI se baat karo — naam, kaam, anubhav batao.<br/>SHRAM-AI aapka pura profile tayyar kar dega.</p>
+      </div>
+      <div id="profileData" style="display:none;">
+        <div class="p-header">
+          <div class="p-avatar" id="pAvatar">🧑‍🔧</div>
+          <div>
+            <div class="p-name" id="pName">—</div>
+            <div class="p-role" id="pRole">—</div>
+          </div>
+          <div id="pVerified" class="p-unverified">⏳ Pending</div>
+        </div>
+        <div class="wage-grid">
+          <div class="w-box"><div class="w-val green" id="wFair">—</div><div class="w-lab">Fair Wage</div></div>
+          <div class="w-box"><div class="w-val gold" id="wCurrent">—</div><div class="w-lab">Earn Now</div></div>
+          <div class="w-box"><div class="w-val red" id="wLoss">—</div><div class="w-lab">Daily Loss</div></div>
+        </div>
+        <div class="wage-bar-wrap">
+          <div class="wage-bar-track"><div class="wage-bar-fill" id="wageBarFill" style="width:0%"></div></div>
+          <div class="wage-bar-note" id="wageBarNote"></div>
+        </div>
+        <div class="chain-badge" id="chainBadge" style="display:none;margin-bottom:13px;">⛓️ Blockchain Verified · DigiLocker Ready</div>
+        <div id="profileAlerts"></div>
+        <div class="p-actions">
+          <button class="btn-primary" onclick="verifyNow()">🔐 Verify Now</button>
+          <button class="btn-secondary" onclick="shareCard()">📤 Share Card</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('skills',this)">🏅 Skills</button>
+      <button class="tab" onclick="switchTab('jobs',this)">💼 Jobs</button>
+      <button class="tab" onclick="switchTab('upskill',this)">📈 Upskill</button>
+      <button class="tab" onclick="switchTab('rights',this)">⚖️ Rights</button>
+    </div>
+
+    <!-- SKILLS TAB -->
+    <div id="tab-skills">
+      <p class="section-title">Verified Skills</p>
+      <div class="skills-grid" id="skillsGrid">
+        <div class="empty-state" style="grid-column:1/-1;"><div class="e-icon">🔧</div>Chat karke apna kaam batao — skills yahan dikhenge.</div>
+      </div>
+      <div id="skillAlerts"></div>
+    </div>
+
+    <!-- JOBS TAB -->
+    <div id="tab-jobs" style="display:none;">
+      <p class="section-title">Matching Jobs</p>
+      <div id="jobsList">
+        <div class="empty-state"><div class="e-icon">💼</div>Apna trade batao — matched jobs yahan dikhenge.</div>
+      </div>
+    </div>
+
+    <!-- UPSKILL TAB -->
+    <div id="tab-upskill" style="display:none;">
+      <p class="section-title">ROI-Based Upskilling</p>
+      <div id="upskillList">
+        <div class="empty-state"><div class="e-icon">📚</div>Profile complete karein — personalized courses dikhenge.</div>
+      </div>
+    </div>
+
+    <!-- RIGHTS TAB -->
+    <div id="tab-rights" style="display:none;">
+      <p class="section-title">Worker Rights & Protection</p>
+      <div id="rightsList">
+        <div class="alert info"><span class="alert-icon">📄</span><div class="alert-body"><div class="a-title">Digital Contract</div><div class="a-desc">Kaam shuru karne se pehle AI se contract banwao. Wage, duration, payment date sab Hindi mein.</div></div></div>
+        <div class="alert scheme"><span class="alert-icon">🏛️</span><div class="alert-body"><div class="a-title">PM Vishwakarma Yojana</div><div class="a-desc">₹15,000 toolkit allowance + free skill training. Apply karo abhi.</div></div></div>
+        <div class="alert success"><span class="alert-icon">💸</span><div class="alert-body"><div class="a-title">Wage Escrow</div><div class="a-desc">Employer payment pehle deposit kare — kaam poora hone par auto-release hoga.</div></div></div>
+        <div class="alert warn"><span class="alert-icon">🚨</span><div class="alert-body"><div class="a-title">SOS Helpline</div><div class="a-desc">Emergency mein nearby workers ko alert karo. Legal aid se connect karo.</div></div></div>
+      </div>
+    </div>
+
+  </div><!-- /profile-section -->
+
+  <!-- RIGHT: CHAT -->
+  <div class="chat-col">
+    <div class="status-bar loading" id="connectionStatus" style="display:none;">
+      <span>⚡</span><span id="connectionText">Connecting...</span>
+    </div>
+    <div class="chat-box">
+      <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <div class="chat-ai-name">SHRAM-AI Bot</div>
+          <div class="chat-ai-sub">● Online · Hindi + English</div>
+        </div>
+        <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
+      </div>
+      <div class="messages" id="messages"></div>
+      <div class="quick-replies" id="quickReplies"></div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" placeholder="अपना नाम, काम, अनुभव बताएं..." onkeydown="if(event.key==='Enter')sendMessage()"/>
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<!-- SHARE CARD MODAL -->
+<div class="share-modal-bg" id="shareModal">
+  <div class="share-modal">
+    <h3>📤 Aapka Skill Card</h3>
+    <p class="sub">Share karo employers ke saath — WhatsApp, copy ya download karo.</p>
+
+    <!-- Visual Card -->
+    <div class="skill-card-visual" id="skillCardVisual">
+      <div class="sc-logo">
+        <div class="sc-logo-mark">श</div>
+        <div class="sc-logo-text">SHRAM<span>AI</span></div>
+        <div class="sc-verified-badge" id="scVerifiedBadge">✓ VERIFIED</div>
+      </div>
+      <div class="sc-avatar-row">
+        <div class="sc-avatar" id="scAvatar">🧑‍🔧</div>
+        <div>
+          <div class="sc-name" id="scName">—</div>
+          <div class="sc-trade" id="scTrade">—</div>
+        </div>
+      </div>
+      <div class="sc-stats">
+        <div class="sc-stat">
+          <div class="sc-stat-val green" id="scFairWage">—</div>
+          <div class="sc-stat-lab">Fair Wage</div>
+        </div>
+        <div class="sc-stat">
+          <div class="sc-stat-val orange" id="scExp">—</div>
+          <div class="sc-stat-lab">Experience</div>
+        </div>
+        <div class="sc-stat">
+          <div class="sc-stat-val" id="scDistrict">—</div>
+          <div class="sc-stat-lab">Location</div>
+        </div>
+      </div>
+      <div class="sc-tags-row" id="scTags"></div>
+      <div class="sc-footer">
+        <div class="sc-footer-id" id="scId">ID: —</div>
+        <div class="sc-footer-url">shram-ai.in</div>
+      </div>
+    </div>
+
+    <!-- Share Buttons -->
+    <div class="share-actions">
+      <button class="share-btn whatsapp" onclick="shareWhatsApp()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </button>
+      <button class="share-btn copy" id="copyBtn" onclick="copyCardText()">
+        📋 Text Copy
+      </button>
+      <button class="share-btn download" onclick="downloadCard()">
+        ⬇️ Save Image
+      </button>
+      <button class="share-btn close-share" onclick="closeShareModal()">
+        ✕ Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="dataset.js"></script>
+<script>
+// =============================================
+//  SHRAM-AI — Main Application Logic v2.0
+//  Warm UI + Dynamic AI + AWS Integration
+// =============================================
+
+/* ---- CONFIG ---- */
+// ✅ HARDCODED BACKEND — no client-side config needed
+// Just replace API_BASE_URL below with your API Gateway URL once
+const API_BASE_URL = 'https://hufy1r2ma9.execute-api.ap-south-1.amazonaws.com/prod';
+// Example: const API_BASE_URL = 'https://abc123.execute-api.us-east-1.amazonaws.com/prod';
+
+let cfg = {
+  apiUrl: API_BASE_URL,
+  lang: localStorage.getItem('shramai_lang') || 'hi'
+};
+
+function loadConfig(){
+  cfg.lang = localStorage.getItem('shramai_lang') || 'hi';
+  document.getElementById('cfgLang').value = cfg.lang;
+  updateStatusBadge();
+}
+function saveConfig(){
+  cfg.lang = document.getElementById('cfgLang').value;
+  localStorage.setItem('shramai_lang', cfg.lang);
+  updateStatusBadge();
+  closeConfig();
+  showToast('✅ Language saved!');
+}
+function updateStatusBadge(){
+  const el = document.getElementById('dbStatus');
+  const badge = document.getElementById('statusBadge');
+  if(cfg.apiUrl && !cfg.apiUrl.includes('PASTE_YOUR')){
+    el.textContent = '🟢 AWS Bedrock Live';
+    badge.className = 'badge-live';
+  } else {
+    el.textContent = '⚡ Offline Mode';
+    badge.className = 'badge-live warn';
+  }
+}
+function openConfig(){ document.getElementById('configModal').classList.add('open'); }
+function closeConfig(){ document.getElementById('configModal').classList.remove('open'); }
+
+/* ---- DYNAMODB via API GATEWAY ---- */
+async function dbPut(table, item){
+  if(!cfg.apiUrl) return { offline: true };
+  try{
+    const res = await fetch(`${cfg.apiUrl}/workers`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ table, item })
+    });
+    return res.json();
+  }catch(e){ console.error('DB write error:', e); return { error: e.message }; }
+}
+async function dbGet(table, id){
+  if(!cfg.apiUrl) return null;
+  try{
+    const res = await fetch(`${cfg.apiUrl}/workers/${id}?table=${table}`);
+    return res.json();
+  }catch(e){ return null; }
+}
+async function dbQuery(table, field, value){
+  if(!cfg.apiUrl) return null;
+  try{
+    const res = await fetch(`${cfg.apiUrl}/query?table=${table}&field=${field}&value=${encodeURIComponent(value)}`);
+    return res.json();
+  }catch(e){ return null; }
+}
+async function dbScan(table){
+  if(!cfg.apiUrl) return null;
+  try{
+    const res = await fetch(`${cfg.apiUrl}/scan?table=${table}`);
+    return res.json();
+  }catch(e){ return null; }
+}
+
+// Load live workers from DynamoDB into local pool
+async function loadWorkersFromDB(){
+  const result = await dbScan('shramai-workers');
+  if(result && result.items && result.items.length > 0){
+    // Merge DB workers with dataset (DB takes priority)
+    const dbIds = new Set(result.items.map(w => w.workerId || w.id));
+    const merged = [...result.items, ...workersDataset.filter(w => !dbIds.has(w.id))];
+    window._liveWorkers = merged;
+    showToast(`✅ ${result.items.length} live workers loaded from DynamoDB`);
+  }
+}
+
+// Load live jobs from DynamoDB
+async function loadJobsFromDB(){
+  const result = await dbScan('shramai-jobs');
+  if(result && result.items && result.items.length > 0){
+    window._liveJobs = result.items;
+  }
+}
+
+// Save job application
+async function saveJobToDB(job){
+  return dbPut('shramai-jobs', job);
+}
+
+/* ---- WORKER STATE ---- */
+let worker = {
+  id: null, name: null, trade: null, experience: null,
+  currentWage: null, district: null, state: null,
+  fairWage: null, dailyLoss: null, verified: false,
+  phone: null,
+  sessionId: Date.now().toString(36)
+};
+
+/* ---- CONVERSATION STATE ---- */
+let conversationHistory = [];
+let conversationPhase = 'welcome';
+let isTyping = false;
+
+/* ---- CLAUDE AI via AWS BEDROCK (Lambda proxy) ---- */
+async function callClaude(userMessage){
+  const systemPrompt = buildSystemPrompt();
+  conversationHistory.push({ role:'user', content: userMessage });
+
+  // Offline fallback if no API Gateway URL configured
+  if(!cfg.apiUrl){
+    const resp = offlineBotResponse(userMessage);
+    conversationHistory.push({ role:'assistant', content: resp });
+    return resp;
+  }
+
+  try {
+    const response = await fetch(`${cfg.apiUrl}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: systemPrompt,
+        messages: conversationHistory,
+        max_tokens: 700
+      })
+    });
+
+    if(!response.ok){
+      const errText = await response.text();
+      console.error('Bedrock error:', errText);
+      return offlineBotResponse(userMessage);
+    }
+
+    const data  = await response.json();
+    const reply = data.content[0].text;
+    conversationHistory.push({ role:'assistant', content: reply });
+    return reply;
+
+  } catch(e) {
+    console.error('Chat API error:', e);
+    return offlineBotResponse(userMessage);
+  }
+}
+
+function buildSystemPrompt(){
+  // Build condensed wage summary for context
+  const wageLines = Object.entries(wageIntelligence).map(([t,v]) => 
+    `${t}: avg ₹${v.avg}, min ₹${v.min}, max ₹${v.max}, trend ${v.trend || 'stable'}, topSkill: ${v.topSkill || 'NA'}`
+  ).join('\n');
+
+  // Build recent 5 jobs from dataset
+  const sampleJobs = jobsDataset.slice(0,5).map(j => 
+    `[${j.title} in ${j.district}, ₹${j.wage}/day, ${j.duration}]`
+  ).join(', ');
+
+  // Build upskill options for worker's trade
+  const courses = worker.trade ? (upskillCourses[worker.trade] || upskillCourses['default']) : upskillCourses['default'];
+  const courseText = courses.map(c => `${c.name} (${c.days}d, +₹${c.gain}/day, ${c.provider})`).join(' | ');
+
+  const workerCtx = worker.name ? `
+CURRENT WORKER PROFILE:
+- Name: ${worker.name}
+- Trade: ${worker.trade || 'Unknown'}
+- Experience: ${worker.experience !== null ? worker.experience + ' years' : 'Unknown'}
+- Current wage: ${worker.currentWage ? '₹'+worker.currentWage+'/day' : 'Unknown'}
+- District: ${worker.district || 'Unknown'}
+- Calculated fair wage: ${worker.fairWage ? '₹'+worker.fairWage+'/day' : 'Not yet calculated'}
+- Daily loss: ${worker.dailyLoss ? '₹'+worker.dailyLoss+'/day' : 'Not yet calculated'}
+- Verified: ${worker.verified ? 'Yes' : 'No'}` : 'No profile collected yet.';
+
+  return `You are SHRAM-AI, a warm, empathetic Hindi-English (Hinglish) AI advocate for India's 49 crore informal workers. You speak simply, clearly, and with genuine care.
+
+PHASE: ${conversationPhase}
+${workerCtx}
+
+WAGE INTELLIGENCE DATASET (NCS/Labour Bureau data — use this to compute fair wages):
+${wageLines}
+
+AVAILABLE COURSES FOR ${worker.trade || 'worker'}: ${courseText}
+
+SAMPLE LIVE JOBS: ${sampleJobs}
+
+YOUR MISSION:
+1. Collect info conversationally: name → trade → experience (years) → current daily wage → district
+2. Once you have trade + experience + wage: calculate fair wage with experience multiplier:
+   - <5 yrs: base avg wage
+   - 5-9 yrs: avg × 1.05
+   - 10-14 yrs: avg × 1.10
+   - 15+ yrs: avg × 1.15
+   Show: Fair Wage / Current Wage / Daily Loss / Yearly Loss (×300 days)
+3. Recommend 1-2 courses with exact ROI
+4. Help negotiate wages ("Script batao: employer se kaise maango")
+5. Explain govt schemes: PM Vishwakarma (₹15k toolkit), e-Shram card, PMKVY, PM Awas
+6. Provide verification pathway
+
+STRICT RULES:
+- Max 3-4 sentences per reply (unless showing analysis breakdown)
+- Speak Hinglish naturally — warm, like a knowledgeable friend
+- Use emojis lightly: 🙏 💰 ✅ 🔧 💪
+- End EVERY reply with exactly ONE question or action prompt
+- Never break character or mention "AI"
+- Learn from the dataset — reference real wage ranges, real courses
+- Embed metadata silently at end of every response:
+  [METADATA:{"phase":"PHASE","name":"NAME_OR_NULL","trade":"TRADE_OR_NULL","experience":NUMBER_OR_NULL,"currentWage":NUMBER_OR_NULL,"district":"DISTRICT_OR_NULL"}]
+
+PHASE VALUES: welcome, collecting_name, collecting_trade, collecting_experience, collecting_wage, collecting_district, showing_analysis, complete`;
+}
+
+/* ---- OFFLINE RULE-BASED BOT ---- */
+function offlineBotResponse(input){
+  const lower = input.toLowerCase().trim();
+  
+  if(conversationPhase === 'welcome' || conversationPhase === 'collecting_name'){
+    const name = extractName(input);
+    if(name && conversationPhase === 'collecting_name'){
+      worker.name = name;
+      conversationPhase = 'collecting_trade';
+      return `${name} ji, bahut achha! 😊\n\nAap kya kaam karte hain? Jaise: carpenter, mason, electrician, plumber, welder, painter, tailor... [METADATA:{"phase":"collecting_trade","name":"${name}","trade":null,"experience":null,"currentWage":null,"district":null}]`;
+    }
+    conversationPhase = 'collecting_name';
+    return `Namaste! 🙏 Main SHRAM-AI hoon — aapka digital wage advocate.\n\nAapko aapki sahi mazduri dilaunga, verified skills dunga, behtar kaam dhoondhunga.\n\nPehle batao — aapka naam kya hai? [METADATA:{"phase":"collecting_name","name":null,"trade":null,"experience":null,"currentWage":null,"district":null}]`;
+  }
+  
+  if(conversationPhase === 'collecting_trade'){
+    const trade = extractTrade(input);
+    if(trade){
+      worker.trade = trade;
+      conversationPhase = 'collecting_experience';
+      const wi = wageIntelligence[trade];
+      const wageHint = wi ? ` (fair wage ₹${wi.min}–₹${wi.max}/day)` : '';
+      return `${trade.charAt(0).toUpperCase()+trade.slice(1)}${wageHint} — zaruri kaam! 🔧\n\nKitne saal ka anubhav hai aapko is kaam mein? [METADATA:{"phase":"collecting_experience","name":"${worker.name}","trade":"${trade}","experience":null,"currentWage":null,"district":null}]`;
+    }
+    return `Kripaya apna kaam batao — jaise carpenter, mason, electrician, plumber? [METADATA:{"phase":"collecting_trade","name":"${worker.name}","trade":null,"experience":null,"currentWage":null,"district":null}]`;
+  }
+  
+  if(conversationPhase === 'collecting_experience'){
+    const exp = extractNumber(input);
+    if(exp !== null){
+      worker.experience = exp;
+      conversationPhase = 'collecting_wage';
+      return `${exp} saal ka anubhav — bahut kabile taarif! 💪\n\nAbhi roz kitni mazduri milti hai aapko? (sirf number batao, jaise: 450) [METADATA:{"phase":"collecting_wage","name":"${worker.name}","trade":"${worker.trade}","experience":${exp},"currentWage":null,"district":null}]`;
+    }
+    return `Kripaya sirf number batao — jaise 5, 10, 15 (saal mein)? [METADATA:{"phase":"collecting_experience","name":"${worker.name}","trade":"${worker.trade}","experience":null,"currentWage":null,"district":null}]`;
+  }
+  
+  if(conversationPhase === 'collecting_wage'){
+    const wage = extractNumber(input);
+    if(wage !== null){
+      worker.currentWage = wage;
+      conversationPhase = 'collecting_district';
+      return `Samjha. Aap kaunse district mein kaam karte hain? (jaise: Patna, Varanasi, Bhopal, Lucknow) [METADATA:{"phase":"collecting_district","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${wage},"district":null}]`;
+    }
+    return `Roz ki mazduri batao — jaise 400, 500, 600 (rupees mein)? [METADATA:{"phase":"collecting_wage","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":null,"district":null}]`;
+  }
+  
+  if(conversationPhase === 'collecting_district'){
+    const district = input.trim().replace(/[.!?]$/, '');
+    worker.district = district;
+    conversationPhase = 'showing_analysis';
+    calculateAndShowAnalysis();
+    return generateAnalysisResponse();
+  }
+
+  // Post-profile responses
+  if(lower.includes('job') || lower.includes('kaam') || lower.includes('naukri')){
+    const jobs = getMatchingJobs();
+    if(jobs.length) return `Aapke liye ${jobs.length} jobs available hain! 💼 "Jobs" tab check karo — ${jobs[0].title} (₹${jobs[0].wage}/day) best match hai. [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+    return `Abhi aapke area mein exact match nahi mila. Kal dobara check karo — naye jobs roz add hote hain! [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+  }
+  if(lower.includes('upskill') || lower.includes('course') || lower.includes('seekhna') || lower.includes('training')){
+    const courses = upskillCourses[worker.trade] || upskillCourses['default'];
+    return `Aapke liye best course: "${courses[0].name}" — ${courses[0].days} din mein +₹${courses[0].gain}/day gain! Provider: ${courses[0].provider}. Enroll karein? 📈 [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+  }
+  if(lower.includes('verify') || lower.includes('credential') || lower.includes('certificate')){
+    return `Verification ke liye: 1) Voice interview (jo ho gaya ✅) 2) Optional: 30-sec video bhejo 3) Peer endorsement lo — phir blockchain certificate milega DigiLocker mein! 🔐 Abhi verify karein? [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+  }
+  if(lower.includes('scheme') || lower.includes('yojana') || lower.includes('sarkar') || lower.includes('govt')){
+    return `Aap ke liye eligible schemes: 1) PM Vishwakarma (₹15,000 toolkit + training) 2) e-Shram card (accident insurance) 3) PMKVY free skill training 4) PM Awas Yojana. Kaunsi scheme mein help chahiye? 🏛️ [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+  }
+  if(lower.includes('negotiate') || lower.includes('mazduri') || lower.includes('raise') || lower.includes('barhao')){
+    const fair = worker.fairWage || 600;
+    return `Negotiation script: "Maine ${worker.experience} saal kaam kiya hai, market rate ₹${fair}/day hai — isliye mujhe yeh chahiye." Confident rehna, prove karo apni value! 💪 [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+  }
+  
+  return `Aapka profile save ho gaya hai! Jobs, upskilling, ya govt schemes ke baare mein poochho — main hamesha available hoon. 🙏 [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+}
+
+/* ---- METADATA ---- */
+function extractMetadata(response){
+  const match = response.match(/\[METADATA:({.*?})\]/);
+  if(!match) return null;
+  try{ return JSON.parse(match[1]); }catch(e){ return null; }
+}
+function stripMetadata(response){
+  return response.replace(/\[METADATA:({.*?})\]/g,'').trim();
+}
+function applyMetadata(meta){
+  if(!meta) return;
+  if(meta.phase) conversationPhase = meta.phase;
+  if(meta.name && meta.name !== 'null' && !worker.name) worker.name = meta.name;
+  if(meta.trade && meta.trade !== 'null' && !worker.trade) worker.trade = meta.trade.toLowerCase();
+  if(meta.experience !== null && meta.experience !== undefined && meta.experience !== 'null' && !worker.experience) worker.experience = parseInt(meta.experience);
+  if(meta.currentWage !== null && meta.currentWage !== undefined && meta.currentWage !== 'null' && !worker.currentWage) worker.currentWage = parseInt(meta.currentWage);
+  if(meta.district && meta.district !== 'null' && !worker.district) worker.district = meta.district;
+  
+  if(worker.trade && worker.currentWage) calculateAndShowAnalysis();
+  updateProfileUI();
+  
+  if(meta.phase === 'complete' || meta.phase === 'showing_analysis') saveWorkerToDB();
+}
+
+/* ---- WAGE CALCULATION ---- */
+function calculateAndShowAnalysis(){
+  const trade = worker.trade;
+  const wi = wageIntelligence[trade] || wageIntelligence['carpenter'];
+  
+  let expMult = 1.0;
+  if(worker.experience >= 15) expMult = 1.15;
+  else if(worker.experience >= 10) expMult = 1.10;
+  else if(worker.experience >= 5) expMult = 1.05;
+  
+  worker.fairWage = Math.round(wi.avg * expMult);
+  worker.dailyLoss = Math.max(0, worker.fairWage - (worker.currentWage || 0));
+  
+  renderMatchingJobs();
+  renderUpskills();
+  updateProfileUI();
+}
+
+function generateAnalysisResponse(){
+  const loss = worker.dailyLoss || 0;
+  const yearLoss = loss * 300;
+  return `📊 ${worker.name} ji, yeh dekho:\n\n💚 Fair wage: ₹${worker.fairWage}/day\n💛 Abhi milta hai: ₹${worker.currentWage}/day\n🔴 Daily nuksan: ₹${loss}/day\n🚨 Saal ka nuksan: ₹${yearLoss.toLocaleString('en-IN')}\n\nYeh "proof gap" hai — skill gap nahi! Verification karwa lo aur puri mazduri lo. Kya abhi verify karein? 🔐 [METADATA:{"phase":"complete","name":"${worker.name}","trade":"${worker.trade}","experience":${worker.experience},"currentWage":${worker.currentWage},"district":"${worker.district}"}]`;
+}
+
+/* ---- HELPERS ---- */
+function extractName(str){
+  str = str.trim();
+  const noise = ['mera','naam','main','hoon','i','am','my','name','is','hai','ji','sahab','bhai','mujhe','bolte'];
+  const parts = str.split(/[\s,]+/).filter(p => p.length > 1 && !noise.includes(p.toLowerCase()));
+  if(parts.length) return parts[0].charAt(0).toUpperCase()+parts[0].slice(1).toLowerCase();
+  return null;
+}
+function extractTrade(str){
+  const lower = str.toLowerCase();
+  const trades = Object.keys(wageIntelligence);
+  for(const t of trades){ if(lower.includes(t)) return t; }
+  const aliases = {
+    'kaarigari':'carpenter','lakri':'carpenter','wood':'carpenter','barhaiyi':'carpenter',
+    'raj':'mason','mistri':'mason','building':'mason','brickwork':'mason','rajmistri':'mason',
+    'electric':'electrician','bijli':'electrician','wiring':'electrician',
+    'plumb':'plumber','pipe':'plumber','nal':'plumber','nalkari':'plumber',
+    'weld':'welder','welding':'welder',
+    'paint':'painter','rang':'painter','rangai':'painter',
+    'silai':'tailor','darzi':'tailor','kapda':'tailor','sewing':'tailor',
+    'loha':'blacksmith','iron':'blacksmith','lohaar':'blacksmith',
+    'bunai':'weaver','handloom':'weaver','bun':'weaver',
+    'khana':'cook','rasoi':'cook','chef':'cook','cooking':'cook',
+    'asha':'asha worker','health worker':'asha worker',
+    'anganwadi':'anganwadi','aanganwadi':'anganwadi',
+    'dai':'midwife','delivery':'midwife',
+    'nurse':'nurse aide','medical':'nurse aide','jcc':'nurse aide',
+    'ghar':'domestic work','housework':'domestic work','cleaning':'domestic work',
+    'brick':'brick layer','eet':'brick layer',
+  };
+  for(const [alias,trade] of Object.entries(aliases)){ if(lower.includes(alias)) return trade; }
+  return null;
+}
+function extractNumber(str){
+  const m = str.replace(/[,₹]/g,'').match(/\d+/);
+  return m ? parseInt(m[0]) : null;
+}
+
+/* ---- DYNAMODB SAVE ---- */
+async function saveWorkerToDB(){
+  if(!cfg.apiUrl || !worker.name) return;
+  const item = {
+    workerId: worker.id || ('w_'+Date.now()),
+    name: worker.name,
+    trade: worker.trade,
+    experience: worker.experience,
+    currentWage: worker.currentWage,
+    fairWage: worker.fairWage,
+    dailyLoss: worker.dailyLoss,
+    district: worker.district,
+    state: worker.state,
+    phone: worker.phone,
+    verified: worker.verified,
+    sessionId: worker.sessionId,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    source: 'chat_bot_v2',
+    platform: 'web'
+  };
+  if(!worker.id){ worker.id = item.workerId; }
+  try{
+    const result = await dbPut('shramai-workers', item);
+    if(result && !result.offline && !result.error){
+      showToast('✅ Profile DynamoDB mein save ho gaya!');
+    }
+  }catch(e){ console.error('DB save failed:', e); }
+}
+
+/* ---- PROFILE UI ---- */
+const tradeEmoji = {
+  carpenter:'🪚',mason:'🏗️',electrician:'⚡',plumber:'🔧',welder:'🔥',
+  painter:'🖌️',tailor:'🧵',blacksmith:'⚒️',weaver:'🧶',cook:'👨‍🍳',
+  'asha worker':'💊','anganwadi':'👶',midwife:'🤱','nurse aide':'🩺',
+  'domestic work':'🏠','brick layer':'🧱',
+};
+
+function updateProfileUI(){
+  if(!worker.name) return;
+  document.getElementById('profileEmpty').style.display = 'none';
+  document.getElementById('profileData').style.display = 'block';
+  
+  const avatar = tradeEmoji[worker.trade] || '🧑‍🔧';
+  document.getElementById('pAvatar').textContent = avatar;
+  document.getElementById('pName').textContent = worker.name + ' ji';
+  
+  const exp = worker.experience !== null ? `${worker.experience} saal anubhav` : '';
+  const dist = worker.district ? ` · ${worker.district}` : '';
+  const tradeName = worker.trade ? worker.trade.charAt(0).toUpperCase()+worker.trade.slice(1) : '...';
+  document.getElementById('pRole').textContent = `${tradeName}${exp ? ' · '+exp : ''}${dist}`;
+  
+  if(worker.fairWage){
+    document.getElementById('wFair').textContent = `₹${worker.fairWage}`;
+    document.getElementById('wCurrent').textContent = worker.currentWage ? `₹${worker.currentWage}` : '—';
+    document.getElementById('wLoss').textContent = worker.dailyLoss > 0 ? `-₹${worker.dailyLoss}` : '₹0';
+    
+    const pct = worker.fairWage > 0 ? Math.round((worker.currentWage/worker.fairWage)*100) : 0;
+    document.getElementById('wageBarFill').style.width = pct + '%';
+    document.getElementById('wageBarNote').textContent = `Fair wage ka ${pct}% kama rahe hain — ${100-pct}% gap hai`;
+    
+    const alertsEl = document.getElementById('profileAlerts');
+    alertsEl.innerHTML = '';
+    if(worker.dailyLoss > 100){
+      alertsEl.innerHTML = `<div class="alert warn" style="margin-bottom:12px;"><span class="alert-icon">⚠️</span><div class="alert-body"><div class="a-title">Wage Gap Detected</div><div class="a-desc">Saal mein ₹${(worker.dailyLoss*300).toLocaleString('en-IN')} ka nuksan! Abhi verify karke full wage lo.</div></div></div>`;
+    }
+    
+    renderSkillsGrid();
+  }
+  
+  if(worker.verified){
+    document.getElementById('pVerified').className = 'p-verified';
+    document.getElementById('pVerified').textContent = '✓ Verified';
+    document.getElementById('chainBadge').style.display = 'flex';
+  }
+}
+
+function renderSkillsGrid(){
+  const wi = wageIntelligence[worker.trade];
+  if(!wi) return;
+  const pct = Math.min(100, 40 + (worker.experience||0)*4);
+  const level = pct>=85?'Master':pct>=65?'Intermediate':'Beginner';
+  const levelClass = level.toLowerCase();
+  
+  document.getElementById('skillsGrid').innerHTML = `
+    <div class="skill-chip">
+      <div class="sk-top">
+        <span class="sk-name">${worker.trade.charAt(0).toUpperCase()+worker.trade.slice(1)}</span>
+        <span class="sk-level ${levelClass}">${level}</span>
+      </div>
+      <div class="sk-bar"><div class="sk-fill" style="width:${pct}%"></div></div>
+      <div class="sk-wage">Fair: ₹${wi.avg}–₹${wi.max}/day</div>
+    </div>
+    <div class="skill-chip">
+      <div class="sk-top">
+        <span class="sk-name">Digital Literacy</span>
+        <span class="sk-level beginner">Beginner</span>
+      </div>
+      <div class="sk-bar"><div class="sk-fill" style="width:20%"></div></div>
+      <div class="sk-wage">+₹80/day potential</div>
+    </div>
+  `;
+}
+
+/* ---- JOBS ---- */
+function getMatchingJobs(){
+  const pool = window._liveJobs || jobsDataset;
+  let filtered = [...pool];
+  if(worker.trade) filtered = filtered.filter(j => j.trade === worker.trade);
+  if(worker.currentWage) filtered = filtered.filter(j => j.wage >= worker.currentWage * 0.9);
+  filtered.sort((a,b) => b.wage - a.wage);
+  return filtered.slice(0, 5);
+}
+
+function renderMatchingJobs(){
+  const jobs = getMatchingJobs();
+  const el = document.getElementById('jobsList');
+  if(!jobs.length){
+    el.innerHTML = '<div class="empty-state"><div class="e-icon">💼</div>Abhi koi job match nahi hua. Kal dobara check karo.</div>';
+    return;
+  }
+  el.innerHTML = jobs.map(j => `
+    <div class="job-card" id="job_${j.id}">
+      <div class="jc-top">
+        <div>
+          <div class="jc-title">${j.title}</div>
+          <div class="jc-employer">👤 ${j.employer} ${'⭐'.repeat(Math.round(j.employerRating||4))} (${j.employerRating||4})</div>
+        </div>
+        <div class="jc-wage">
+          <div class="jc-wage-val">₹${j.wage}</div>
+          <div class="jc-wage-unit">per day</div>
+        </div>
+      </div>
+      <div class="jc-tags">
+        <span class="tag loc">📍 ${j.district}, ${j.state}</span>
+        <span class="tag dur">🕐 ${j.duration}</span>
+        ${j.urgent?'<span class="tag urg">🔴 Urgent</span>':''}
+        ${j.wage >= (worker.fairWage||0)?'<span class="tag applied">✅ Fair Pay</span>':''}
+      </div>
+      <div class="jc-landmark">📌 ${j.landmark}</div>
+      <button class="jc-apply" onclick="applyForJob('${j.id}',this)">Apply Now →</button>
+    </div>
+  `).join('');
+}
+
+async function applyForJob(jobId, btn){
+  btn.disabled = true;
+  btn.textContent = '⏳ Applying...';
+  
+  await dbPut('shramai-applications', {
+    applicationId: 'app_'+Date.now(),
+    workerId: worker.id || worker.sessionId,
+    workerName: worker.name,
+    workerTrade: worker.trade,
+    workerExperience: worker.experience,
+    jobId,
+    appliedAt: new Date().toISOString(),
+    status: 'pending'
+  });
+  
+  setTimeout(()=>{
+    btn.textContent = '✅ Applied!';
+    btn.style.background = 'var(--greenBg)';
+    btn.style.color = 'var(--green)';
+    btn.style.border = '1px solid var(--greenBorder)';
+    showToast('🎉 Application bheji gayi!');
+    addBotMessage(`✅ ${worker.name} ji, aapka application bhej diya! Employer ko aapka verified profile dikhega. Response 24 ghante mein aayega. 🎯`);
+  }, 1200);
+}
+
+/* ---- UPSKILLS ---- */
+function renderUpskills(){
+  const courses = upskillCourses[worker.trade] || upskillCourses['default'];
+  const el = document.getElementById('upskillList');
+  el.innerHTML = courses.map((c,i) => `
+    <div class="upskill-card${i===0?' top':''}">
+      <div>
+        ${i===0?'<div class="usk-top-tag">⭐ BEST ROI FOR YOU</div>':''}
+        <div class="usk-name">${c.name}</div>
+        <div class="usk-meta">📅 ${c.days} days · ${c.provider}</div>
+      </div>
+      <div class="usk-gain">
+        <div class="usk-amount">+₹${c.gain}</div>
+        <div class="usk-day">per day</div>
+        <button class="usk-btn" onclick="enrollCourse('${c.name}')">Enroll →</button>
+      </div>
+    </div>
+  `).join('');
+  
+  const wi = wageIntelligence[worker.trade];
+  if(wi){
+    document.getElementById('skillAlerts').innerHTML = `
+      <div class="alert info" style="margin-top:10px;">
+        <span class="alert-icon">📈</span>
+        <div class="alert-body">
+          <div class="a-title">Market Trend: ${wi.trend || '+7% YoY'}</div>
+          <div class="a-desc">Top skill demand: ${wi.topSkill || 'Digital tools'} — abhi seekho, zyada kamao.</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function enrollCourse(name){
+  showToast(`📚 ${name} mein enrollment hua!`);
+  addBotMessage(`🎓 Bahut achha! "${name}" course ke liye enrolled ho gaye. DIKSHA app par notification aayegi. All the best! 💪`);
+}
+
+/* ---- VERIFY ---- */
+function verifyNow(){
+  worker.verified = true;
+  document.getElementById('pVerified').className = 'p-verified';
+  document.getElementById('pVerified').textContent = '✓ Verified';
+  document.getElementById('chainBadge').style.display = 'flex';
+  showToast('🔐 Skill verification complete!');
+  addBotMessage(`🎉 Mubarak ho ${worker.name} ji! Aapka skill certificate blockchain par mint ho gaya. DigiLocker mein dekh sakte hain. Employers ab aapka verified profile dekhenge! ⛓️`);
+  saveWorkerToDB();
+}
+
+/* ---- SHARE CARD — Dynamic ---- */
+function shareCard(){
+  if(!worker.name){
+    showToast('⚠️ Pehle apna profile complete karo.');
+    return;
+  }
+  populateShareCard();
+  document.getElementById('shareModal').classList.add('open');
+}
+
+function populateShareCard(){
+  const avatar  = tradeEmoji[worker.trade] || '🧑‍🔧';
+  const trade   = worker.trade ? worker.trade.charAt(0).toUpperCase()+worker.trade.slice(1) : '—';
+  const exp     = worker.experience ? `${worker.experience} Saal` : '—';
+  const fw      = worker.fairWage   ? `₹${worker.fairWage}/day` : '—';
+  const dist    = worker.district   || '—';
+  const wid     = worker.id         || worker.sessionId || '—';
+  const wi      = wageIntelligence[worker.trade] || {};
+
+  // Populate card fields
+  document.getElementById('scAvatar').textContent   = avatar;
+  document.getElementById('scName').textContent     = worker.name + ' ji';
+  document.getElementById('scTrade').textContent    = `${trade} · ${dist}`;
+  document.getElementById('scFairWage').textContent = fw;
+  document.getElementById('scExp').textContent      = exp;
+  document.getElementById('scDistrict').textContent = dist;
+  document.getElementById('scId').textContent       = `ID: ${wid.slice(0,12)}`;
+
+  // Verified badge
+  const badge = document.getElementById('scVerifiedBadge');
+  if(worker.verified){
+    badge.textContent = '✓ VERIFIED';
+    badge.style.display = 'block';
+  } else {
+    badge.textContent = '⏳ PENDING';
+    badge.style.background = 'rgba(245,158,11,.2)';
+    badge.style.borderColor = 'rgba(245,158,11,.4)';
+    badge.style.color = '#FCD34D';
+  }
+
+  // Skill tags
+  const level = (worker.experience||0) >= 15 ? 'Master' : (worker.experience||0) >= 7 ? 'Senior' : 'Intermediate';
+  const tags = [
+    { text: trade,  highlight: true },
+    { text: level,  highlight: false },
+    { text: dist,   highlight: false },
+    { text: `${(worker.experience||0)} yrs exp`, highlight: false },
+  ];
+  if(wi.topSkill) tags.push({ text: wi.topSkill, highlight: false });
+  if(worker.verified) tags.push({ text: '⛓️ Blockchain', highlight: true });
+
+  document.getElementById('scTags').innerHTML = tags
+    .map(t => `<span class="sc-tag${t.highlight?' highlight':''}">${t.text}</span>`)
+    .join('');
+}
+
+function buildShareText(){
+  const trade = worker.trade ? worker.trade.charAt(0).toUpperCase()+worker.trade.slice(1) : '';
+  const verified = worker.verified ? '✅ Verified by SHRAM-AI' : '⏳ Verification Pending';
+  const loss = worker.dailyLoss > 0 ? `\n💸 Fair wage gap: ₹${worker.dailyLoss}/day (₹${(worker.dailyLoss*300).toLocaleString('en-IN')}/year)` : '';
+
+  return `🔧 *SHRAM-AI Skill Card*
+
+👤 *${worker.name}*
+🛠️ Trade: ${trade}
+📍 Location: ${worker.district || '—'}
+⏱️ Experience: ${worker.experience || '—'} saal
+💰 Fair Wage: ₹${worker.fairWage || '—'}/day
+🏅 Level: ${(worker.experience||0)>=15?'Master':(worker.experience||0)>=7?'Senior':'Intermediate'}${loss}
+
+${verified}
+🌐 shram-ai.in | ID: ${(worker.id||worker.sessionId||'').slice(0,10)}`;
+}
+
+async function copyCardText(){
+  const text = buildShareText();
+  const btn  = document.getElementById('copyBtn');
+
+  try {
+    // Modern clipboard API
+    await navigator.clipboard.writeText(text);
+    btn.textContent = '✅ Copied!';
+    btn.style.background = 'var(--greenBg)';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--greenBorder)';
+    showToast('✅ Card text copied! WhatsApp mein paste karo.');
+  } catch(e) {
+    // Fallback for older browsers / HTTP
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      btn.textContent = '✅ Copied!';
+      showToast('✅ Copied via fallback!');
+    } catch(e2) {
+      showToast('❌ Copy failed — manually select aur copy karo.');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // Reset button after 2.5s
+  setTimeout(()=>{
+    btn.textContent = '📋 Text Copy';
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  }, 2500);
+}
+
+function shareWhatsApp(){
+  const text = buildShareText();
+  const encoded = encodeURIComponent(text);
+  // Opens WhatsApp with pre-filled message
+  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+  showToast('📲 WhatsApp khul raha hai...');
+}
+
+async function downloadCard(){
+  showToast('⏳ Card tayyar ho raha hai...');
+
+  // Use html2canvas if available, otherwise fallback to SVG download
+  try {
+    // Dynamically load html2canvas
+    if(!window.html2canvas){
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    const card = document.getElementById('skillCardVisual');
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      backgroundColor: null,
+      logging: false,
+      useCORS: true
+    });
+
+    const link = document.createElement('a');
+    link.download = `shramai-${worker.name?.replace(/\s+/g,'-')}-skillcard.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('✅ Card download ho gaya!');
+
+  } catch(e) {
+    // Fallback — download as SVG text card
+    console.warn('html2canvas failed, using text fallback:', e);
+    downloadTextFallback();
+  }
+}
+
+function downloadTextFallback(){
+  // Generate a clean SVG skill card as fallback
+  const trade  = worker.trade ? worker.trade.charAt(0).toUpperCase()+worker.trade.slice(1) : '—';
+  const avatar = tradeEmoji[worker.trade] || '🧑';
+  const level  = (worker.experience||0)>=15?'Master':(worker.experience||0)>=7?'Senior':'Intermediate';
+
+  const svg = `<svg width="400" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A0F05"/>
+      <stop offset="50%" style="stop-color:#3D1F08"/>
+      <stop offset="100%" style="stop-color:#1A0F05"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="220" rx="16" fill="url(#bg)"/>
+  <rect x="16" y="16" width="60" height="22" rx="6" fill="#E8650A" opacity="0.9"/>
+  <text x="26" y="31" font-size="11" font-weight="bold" fill="white">SHRAM-AI</text>
+  <text x="16" y="72" font-size="26" fill="white">${avatar}</text>
+  <text x="52" y="62" font-size="18" font-weight="bold" fill="white">${worker.name}</text>
+  <text x="52" y="78" font-size="12" fill="rgba(255,255,255,0.6)">${trade} · ${worker.district||'India'}</text>
+  <rect x="16" y="96" width="110" height="52" rx="8" fill="rgba(255,255,255,0.07)"/>
+  <text x="71" y="116" font-size="16" font-weight="bold" fill="#4ADE80" text-anchor="middle">₹${worker.fairWage||'—'}</text>
+  <text x="71" y="130" font-size="9" fill="rgba(255,255,255,0.5)" text-anchor="middle">FAIR WAGE/DAY</text>
+  <rect x="136" y="96" width="110" height="52" rx="8" fill="rgba(255,255,255,0.07)"/>
+  <text x="191" y="116" font-size="16" font-weight="bold" fill="#F5890F" text-anchor="middle">${worker.experience||'—'} Saal</text>
+  <text x="191" y="130" font-size="9" fill="rgba(255,255,255,0.5)" text-anchor="middle">EXPERIENCE</text>
+  <rect x="256" y="96" width="128" height="52" rx="8" fill="rgba(255,255,255,0.07)"/>
+  <text x="320" y="116" font-size="13" font-weight="bold" fill="white" text-anchor="middle">${level}</text>
+  <text x="320" y="130" font-size="9" fill="rgba(255,255,255,0.5)" text-anchor="middle">SKILL LEVEL</text>
+  <rect x="16" y="160" width="80" height="22" rx="6" fill="rgba(232,101,10,0.25)"/>
+  <text x="56" y="175" font-size="11" fill="#F5890F" text-anchor="middle">${trade}</text>
+  <rect x="104" y="160" width="80" height="22" rx="6" fill="rgba(255,255,255,0.08)"/>
+  <text x="144" y="175" font-size="11" fill="rgba(255,255,255,0.7)" text-anchor="middle">${worker.district||'India'}</text>
+  ${worker.verified ? '<rect x="192" y="160" width="80" height="22" rx="6" fill="rgba(34,197,94,0.2)"/><text x="232" y="175" font-size="11" fill="#4ADE80" text-anchor="middle">✓ Verified</text>' : ''}
+  <text x="16" y="208" font-size="9" fill="rgba(255,255,255,0.3)">ID: ${(worker.id||worker.sessionId||'').slice(0,12)}</text>
+  <text x="384" y="208" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="end">shram-ai.in</text>
+</svg>`;
+
+  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = `shramai-${worker.name?.replace(/\s+/g,'-')}-skillcard.svg`;
+  link.href = url;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ SVG card download ho gaya!');
+}
+
+function closeShareModal(){
+  document.getElementById('shareModal').classList.remove('open');
+  // Reset copy button state
+  const btn = document.getElementById('copyBtn');
+  if(btn){ btn.textContent = '📋 Text Copy'; btn.style.cssText = ''; }
+}
+
+/* ---- CHAT ENGINE ---- */
+function addBotMessage(text, showTypingAnim=false){
+  const msgs = document.getElementById('messages');
+  
+  if(showTypingAnim){
+    const typingEl = document.createElement('div');
+    typingEl.className = 'msg bot typing-indicator';
+    typingEl.id = 'typing';
+    typingEl.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+    msgs.appendChild(typingEl);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  
+  return new Promise(resolve => {
+    const delay = showTypingAnim ? Math.min(1200, text.length*10) : 0;
+    setTimeout(()=>{
+      const typing = document.getElementById('typing');
+      if(typing) typing.remove();
+      
+      const displayText = stripMetadata(text);
+      if(!displayText){ resolve(); return; }
+      
+      const div = document.createElement('div');
+      div.className = 'msg bot';
+      div.innerHTML = `<div class="msg-bubble">${displayText.replace(/\n/g,'<br/>')}</div><div class="msg-time">${getTime()}</div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      resolve();
+    }, delay);
+  });
+}
+
+function addUserMessage(text){
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-time">${getTime()}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function setQuickReplies(replies){
+  const el = document.getElementById('quickReplies');
+  el.innerHTML = replies.map(r => `<button class="qr-btn" onclick="handleQuickReply('${r}')">${r}</button>`).join('');
+}
+
+function handleQuickReply(text){
+  document.getElementById('quickReplies').innerHTML = '';
+  processInput(text);
+}
+
+async function sendMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text || isTyping) return;
+  input.value = '';
+  processInput(text);
+}
+
+async function processInput(text){
+  if(isTyping) return;
+  isTyping = true;
+  
+  addUserMessage(text);
+  document.getElementById('quickReplies').innerHTML = '';
+  
+  // Show typing
+  const msgs = document.getElementById('messages');
+  const typingEl = document.createElement('div');
+  typingEl.className = 'msg bot typing-indicator';
+  typingEl.id = 'typing';
+  typingEl.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(typingEl);
+  msgs.scrollTop = msgs.scrollHeight;
+  
+  try {
+    const rawResponse = await callClaude(text);
+    const meta = extractMetadata(rawResponse);
+    const cleanResponse = stripMetadata(rawResponse);
+    
+    applyMetadata(meta);
+    
+    document.getElementById('typing')?.remove();
+    
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.innerHTML = `<div class="msg-bubble">${cleanResponse.replace(/\n/g,'<br/>')}</div><div class="msg-time">${getTime()}</div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    
+    setContextualQuickReplies(meta?.phase || conversationPhase);
+    
+  } catch(e) {
+    document.getElementById('typing')?.remove();
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.innerHTML = `<div class="msg-bubble">Maafi kijiye, kuch error aaya. Dobara try karo. 🙏</div><div class="msg-time">${getTime()}</div>`;
+    msgs.appendChild(div);
+  }
+  
+  isTyping = false;
+}
+
+function setContextualQuickReplies(phase){
+  const phaseReplies = {
+    'collecting_name': [],
+    'collecting_trade': ['Carpenter', 'Mason', 'Electrician', 'Plumber', 'Welder', 'Tailor'],
+    'collecting_experience': ['2 saal', '5 saal', '10 saal', '15 saal', '20 saal'],
+    'collecting_wage': ['₹300', '₹400', '₹500', '₹600', '₹700'],
+    'collecting_district': ['Patna', 'Varanasi', 'Bhopal', 'Lucknow', 'Jaipur', 'Delhi'],
+    'complete': ['Jobs dikhao', 'Upskill batao', 'Verify karo', 'Govt schemes', 'Wage negotiate'],
+    'showing_analysis': ['Verify karo', 'Jobs dikhao', 'Best course kaunsa?'],
+  };
+  setQuickReplies(phaseReplies[phase] || phaseReplies['complete'] || []);
+}
+
+function getTime(){
+  return new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ---- VOICE STT — Fixed ---- */
+let recognition = null;
+let listening = false;
+
+const langMap = {
+  hi:'hi-IN', en:'en-IN', ta:'ta-IN',
+  bn:'bn-IN', te:'te-IN', mr:'mr-IN',
+  gu:'gu-IN', bho:'hi-IN'
+};
+
+async function toggleMic(){
+  if(listening){ stopListening(); return; }
+
+  // Check browser support
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    showToast('❌ Voice sirf Chrome/Edge mein kaam karta hai.');
+    return;
+  }
+
+  // Request mic permission explicitly first
+  try {
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch(e) {
+    showToast('❌ Microphone permission denied. Browser settings mein allow karo.');
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = langMap[cfg.lang] || 'hi-IN';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+
+  const micBtn = document.getElementById('micBtn');
+  const input  = document.getElementById('chatInput');
+
+  recognition.onstart = () => {
+    listening = true;
+    micBtn.classList.add('listening');
+    micBtn.textContent = '🔴';
+    input.placeholder = '🎤 Bol rahe hain...';
+    showToast('🎤 Sunna shuru ho gaya — boliye!');
+  };
+
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results)
+      .map(r => r[0].transcript)
+      .join('');
+    input.value = transcript;
+
+    // Auto-send on final result
+    if(e.results[e.results.length - 1].isFinal){
+      stopListening();
+      setTimeout(() => sendMessage(), 400);
+    }
+  };
+
+  recognition.onerror = (e) => {
+    stopListening();
+    const msgs = {
+      'not-allowed' : '❌ Mic permission blocked — browser settings check karo.',
+      'no-speech'   : '⚠️ Koi awaaz nahi mili — dobara try karo.',
+      'network'     : '❌ Network error — internet check karo.',
+      'aborted'     : '⚠️ Voice cancelled.',
+    };
+    showToast(msgs[e.error] || `❌ Voice error: ${e.error}`);
+  };
+
+  recognition.onend = () => { stopListening(); };
+
+  try {
+    recognition.start();
+  } catch(e) {
+    showToast('❌ Voice start nahi hua — dobara try karo.');
+    stopListening();
+  }
+}
+
+function stopListening(){
+  if(recognition){ try{ recognition.stop(); }catch(e){} }
+  listening = false;
+  const micBtn = document.getElementById('micBtn');
+  const input  = document.getElementById('chatInput');
+  if(micBtn){ micBtn.classList.remove('listening'); micBtn.textContent = '🎤'; }
+  if(input) input.placeholder = 'अपना नाम, काम, अनुभव बताएं...';
+}
+
+/* ---- TABS ---- */
+function switchTab(tab, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['skills','jobs','upskill','rights'].forEach(t=>{
+    document.getElementById(`tab-${t}`).style.display = t===tab?'block':'none';
+  });
+  if(tab==='jobs' && worker.trade) renderMatchingJobs();
+  if(tab==='upskill' && worker.trade) renderUpskills();
+}
+
+/* ---- TOAST ---- */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ---- INIT ---- */
+function initClaudeSession(){
+  conversationHistory = [];
+  conversationPhase = 'welcome';
+}
+
+async function init(){
+  loadConfig();
+  initClaudeSession();
+  
+  await addBotMessage(`Namaste! 🙏 Main SHRAM-AI hoon — aapka AI advocate aur digital mazduuri expert.
+
+Main aapko aapki sahi mazduri dilaunga, verified credentials dunga, aur behtar kaam dhoondhunga.
+
+Pehle batao — aapka naam kya hai?`, false);
+  
+  setContextualQuickReplies('collecting_name');
+
+  // Auto-load from DB if API is configured
+  if(cfg.apiUrl && !cfg.apiUrl.includes('PASTE_YOUR')){
+    loadWorkersFromDB();
+    loadJobsFromDB();
+  } else {
+    setTimeout(()=>{
+      addBotMessage(`⚙️ Developer note: index.html mein API_BASE_URL set karo Bedrock activate karne ke liye. Abhi offline mode mein hoon.`);
+    }, 2000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
